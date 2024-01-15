@@ -25,34 +25,43 @@
           </button>
       </div>
 <div class="p-10 flex flex-col gap-4 text-sm">
-  <form [formGroup]="miForm" (ngSubmit)="loginCliente()">
+  <form #loginForm ="ngForm" (ngSubmit)="loginCliente(loginForm)">
     <div>
       <label class="text-gray-600 font-bold inline-block pb-2" for="email">Email</label>
       <input class="border border-gray-400 focus:outline-slate-400 rounded-md w-full shadow-sm px-5 py-2" type="email"
-        formControlName="email" placeholder="mehedi@jaman.com">
-      <span class="text-red-600 text-xs"
-        *ngIf="miForm.controls['email'].errors?.['required'] && miForm.controls['email'].touched">* Email
-        obligatorio</span>
-      <span class="text-red-600 text-xs"
-        *ngIf="miForm.controls['email'].errors?.['email'] && miForm.controls['email'].touched">* Formato de email
-        inválido</span>
+        name="email" placeholder="mehedi@jaman.com"
+       required
+       maxlength="200"
+       minlength="10"
+       pattern="^[\w-\.]+@([\w-]+\.)+[\w-]{2,}$"
+       [(ngModel)]="credenciales.email"
+       #email="ngModel"
+       >
+       <span *ngIf="email.errors?.['required']" class="text-red-600 text-xs" >* Email obligatorio</span>
+       <span *ngIf="email.errors?.['maxlength']" class="text-red-600 text-xs" >* Max.numero de caracteres 200</span>
+       <span *ngIf="email.errors?.['minlength']" class="text-red-600 text-xs" >* Min.numero de caracteres 10</span>
+       <span *ngIf="email.errors?.['pattern']" class="text-red-600 text-xs" >* Formato de email incorrecto</span>
     </div>
     <div>
       <label class="text-gray-600 font-bold inline-block pb-2" for="password">Contraseña</label>
       <input class="border border-gray-400 focus:outline-slate-400 rounded-md w-full shadow-sm px-5 py-2"
-        type="password" formControlName="password" placeholder="******">
-      <span class="text-red-600 text-xs"
-        *ngIf="miForm.controls['password'].errors?.['required'] && miForm.controls['password'].touched">* Contraseña
-        obligatoria</span>
-      <span class="text-red-600 text-xs"
-        *ngIf="miForm.controls['password'].errors?.['pattern'] && miForm.controls['password'].touched">* Formato de
-        contraseña inválido</span>
+        type="password" name="password" placeholder="******"
+        [(ngModel)]="credenciales.password"
+        required
+        pattern="^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{5,}$"
+        minlength="6"
+        maxlength="150"
+        #password="ngModel">
+        <span *ngIf="password.errors?.['required']" class="text-red-600 text-xs" >* Contraseña obligatoria</span>
+        <span *ngIf="password.errors?.['minlength']" class="text-red-600 text-xs" >* Min.numero de caracteres 6</span>
+        <span *ngIf="password.errors?.['maxlength']" class="text-red-600 text-xs" >* Max.numero de caracteres 150</span>
+        <span *ngIf="password.errors?.['pattern']" class="text-red-600 text-xs" >* Formato incorrecto al menos MAYUS, MINS, digito y caracter raro</span>
     </div>
     <div>
       <a class="text-gray-400 underline" href="">¿Olvidaste la contraaseña ?</a>
     </div>
     <div>
-      <button class="bg-[#00679f] w-full py-2 rounded-md text-white font-bold cursor-pointer hover:bg-[#181196]"
+      <button [disabled]=" loginForm.status !== 'VALID'" class="bg-[#00679f] w-full py-2 rounded-md text-white disabled:!bg-slate-400 disabled:!text-gray-800  font-bold cursor-pointer hover:bg-[#181196]"
         type="submit">Identificate</button>
     </div>
   </form>

@@ -1,6 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import {FormGroup,FormControl, Validators} from '@angular/forms';
 import { compareToValidator } from '../../../validators/compareTo';
+import { RestnodeService } from '../../../servicios/restnode.service';
+import { Router } from '@angular/router';
+import { Observable, Subscription } from 'rxjs';
+import { IRestMessage } from '../../../modelos/restMessage';
 @Component({
   selector: 'app-registro',
   /*template:/* `` codigo html */
@@ -10,8 +14,12 @@ import { compareToValidator } from '../../../validators/compareTo';
 })
 export class RegistroComponent {
   public miForm:FormGroup;
-
-    constructor() {
+  public observableRegistro: Observable<IRestMessage>;
+  public subcriptionRegistro : Subscription;
+    constructor(private restService : RestnodeService,
+                private router : Router) {
+      this.observableRegistro = new Observable<IRestMessage>();
+      this.subcriptionRegistro = new Subscription();
       this.miForm = new FormGroup(
         {
           nombre: new FormControl('', [ Validators.required, Validators.minLength(3), Validators.maxLength(50) ]  ),
@@ -29,6 +37,18 @@ export class RegistroComponent {
 
     registrarCliente(){
       console.log(this.miForm)
-      
+      //recibir datos como observable... al subscribirse almacenamos los datos en una variable
+      //cuando te subscribas, recibes objeto IRestMessage (controlar codigo respuesta)
+      //en el dispose del componente usando esa variable, cierre subscripcion...
+
+      this.observableRegistro = this.restService.Registro(this.miForm.value);
+      this.observableRegistro.subscribe(datos => {console.log("datos recibidos del server...",datos)});
+    }
+
+    ngOnDestroy():void{
+
+      if(this.subcriptionRegistro){
+        this.subcriptionRegistro.unsubscribe();
+      }
     }
 }

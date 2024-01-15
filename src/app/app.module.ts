@@ -8,7 +8,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule } from '@angular/common/http';
 //ReactiveFormsModule: modulo donde se definen directivas a usar en vistas de componente para mapear objetos FormGroup y FormControl
 //contra elementos del dom (directivas formGroup y formControlName)
-import {ReactiveFormsModule} from '@angular/forms'
+import {FormsModule, ReactiveFormsModule} from '@angular/forms'
 
 //--------------- componentes del modulo principal de la aplicacion----------------------------
 import { AppComponent } from './app.component';
@@ -41,7 +41,7 @@ import { RestnodeService } from './servicios/restnode.service';
 //<--- AppRoutingModule, se encarga de detectar variaciones de url en navegador y en funcion de su fich. de configuracion: app-routing.module.ts
 // carga un componente u otro
     AppRoutingModule,
-
+    FormsModule,
   ],
   /**
    * Los servicios son importantes. En angular no hay contexto global, se hace mediante servicios. Si algun componente necesita
