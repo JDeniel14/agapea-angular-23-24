@@ -26,6 +26,7 @@ export class LoginComponent {
   const _respuesta:IRestMessage = await this.restService.LoginCliente(loginForm.form.value);
   if(_respuesta.codigo === 0){
 
+    console.log(_respuesta)
     this.router.navigateByUrl('/Tienda/Libros');
   }else{
     //mostrar mensajes de error en vista del componente... creas una variable, la metes en un div..
