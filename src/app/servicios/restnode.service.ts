@@ -51,4 +51,41 @@ export class RestnodeService {
                 }
     );
   }
+
+  public ComprobarEmail(valorEmail : string):Observable<IRestMessage>{
+
+  return  this._httpClient.get(
+      `http://localhost:3000/api/Cliente/ComprobarEmail?email=${valorEmail}`) as Observable<IRestMessage>;
+  }
+
+  public OperarCuentaCliente(mode:string|null, oobCode: string|null, apiKey:string|null):Observable<IRestMessage>{
+
+    return this._httpClient.post<IRestMessage>(
+      'http://localhost:3000/api/Cliente/OperarCuentaCliente',
+      {mode,oobCode,apiKey},
+      {
+        headers: new HttpHeaders( { 'Content-Type' : 'application/json'})
+      }
+    );
+  }
+
+
+  public ActivarCuenta(mode:string|null, oobCode: string|null, apiKey:string|null):Observable<IRestMessage>{
+
+    return this._httpClient.get(
+      `http://localhost:3000/api/Cliente/ActivarCuenta?mod${mode}&cod=${oobCode}&key=${apiKey}`,
+
+    ) as Observable<IRestMessage>;
+  }
+
+  public RecuperarCategorias(idCategoria?:string):Promise<IRestMessage>{
+
+    if( typeof(idCategoria)==='undefined'){
+      idCategoria='padres'
+    }
+    return lastValueFrom(this._httpClient.get<IRestMessage>(
+      `http:localhost:3000/api/Tienda/RecuperarCategorias?id=${idCategoria}`
+    )
+     );
+  }
 }

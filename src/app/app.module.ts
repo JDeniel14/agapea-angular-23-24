@@ -19,11 +19,18 @@ import { LoginComponent } from './componentes/zonaCliente/loginComponent/login.c
 
 
 //----------------- directivas del modulo principal de la aplicacion--------------------------
+import { EmailfilterdomainDirective } from './directivas/emailfilterdomain.directive';
+
+import { ComprobacionexisteemailDirective } from './directivas/comprobacionexisteemail.directive';
 
 //----------------- pipes del modulo principal de la aplicacion-------------------------------
 
 //----------------- servicios del modulo principal de la aplicacion---------------------------
 import { RestnodeService } from './servicios/restnode.service';
+import { RegistrookComponent } from './componentes/zonaCliente/registroOkComponent/registrook.component';
+import { PanelclienteComponent } from './componentes/zonaCliente/panelClienteComponent/panelcliente.component';
+import { PaneltiendaComponent } from './componentes/zonaCliente/panelTiendaComponent/paneltienda.component';
+
 
 
 @NgModule({
@@ -31,6 +38,11 @@ import { RestnodeService } from './servicios/restnode.service';
     AppComponent,
     RegistroComponent,
     LoginComponent,
+    EmailfilterdomainDirective,
+    ComprobacionexisteemailDirective,
+    RegistrookComponent,
+    PanelclienteComponent,
+    PaneltiendaComponent,
 
   ],
   imports: [ //<------- array con la definicion de los modulos secundarios que la aplicacion va a usar

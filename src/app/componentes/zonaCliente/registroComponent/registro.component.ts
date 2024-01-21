@@ -12,14 +12,14 @@ import { IRestMessage } from '../../../modelos/restMessage';
   templateUrl: './registro.component.html',
   styleUrl: './registro.component.css'
 })
-export class RegistroComponent {
+export class RegistroComponent implements OnDestroy {
   public miForm:FormGroup;
   public observableRegistro: Observable<IRestMessage>;
   public subcriptionRegistro : Subscription;
     constructor(private restService : RestnodeService,
                 private router : Router) {
-      this.observableRegistro = new Observable<IRestMessage>();
-      this.subcriptionRegistro = new Subscription();
+                  this.observableRegistro = new Observable<IRestMessage>();
+                  this.subcriptionRegistro = new Subscription();
       this.miForm = new FormGroup(
         {
           nombre: new FormControl('', [ Validators.required, Validators.minLength(3), Validators.maxLength(50) ]  ),
@@ -42,7 +42,7 @@ export class RegistroComponent {
       //en el dispose del componente usando esa variable, cierre subscripcion...
 
       this.observableRegistro = this.restService.Registro(this.miForm.value);
-      this.observableRegistro.subscribe(datos => {console.log("datos recibidos del server...",datos)});
+      this.subcriptionRegistro = this.observableRegistro.subscribe(datos => {console.log("datos recibidos del server...",datos);});
     }
 
     ngOnDestroy():void{

@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { RegistroComponent } from './componentes/zonaCliente/registroComponent/registro.component';
 import { LoginComponent } from './componentes/zonaCliente/loginComponent/login.component';
+import { RegistrookComponent } from './componentes/zonaCliente/registroOkComponent/registrook.component';
 
 
 // modulo principal de entutamiento usado por el modulo global de la aplicacion app.module.ts
@@ -16,6 +17,7 @@ const routes: Routes = [
     children: [
       { path: 'Registro', component: RegistroComponent },
       { path: 'Login', component: LoginComponent },
+      {path:'RegistroOk', component: RegistrookComponent }
     ],
   },
   { path: '', redirectTo: 'Cliente/Login', pathMatch: 'full' },
