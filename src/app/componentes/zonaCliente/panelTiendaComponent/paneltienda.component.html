@@ -5,10 +5,11 @@
 @if(_listacategorias){
   @for (cat of _listacategorias; track $index) {
 
-    <a id={{cat.IdCategoria}} [routerLink]="['/Tienda/Libros'+ cat.IdCategoria]" routerLinkActive="router-link-active"
-                      className="list-group-item list-group-item-action">
-                      {{cat}}
+    <a id={{cat.IdCategoria}} [routerLink]="['/Tienda/Libros/',cat.IdCategoria]"
+                      className="list-group-item list-group-item-action btn">
+                      {{cat.NombreCategoria}}
                   </a>
+                  <br>
 
   }
 }

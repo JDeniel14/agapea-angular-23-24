@@ -5,7 +5,7 @@ export interface IRestMessage{
   codigo:number;
   mensaje:string;
   error?:string;
-  datosCliente?:ICliente;
-  tokenSesion?:string;
-  otrosDatos?:any;
+  datoscliente?:ICliente;
+  token?:string;
+  otrosdatos?:any;
 }

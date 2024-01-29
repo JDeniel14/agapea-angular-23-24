@@ -84,7 +84,7 @@ export class RestnodeService {
       idCategoria='padres'
     }
     return lastValueFrom(this._httpClient.get<IRestMessage>(
-      `http:localhost:3000/api/Tienda/RecuperarCategorias?id=${idCategoria}`
+      `http://localhost:3000/api/Tienda/RecuperarCategorias?id=${idCategoria}`
     )
      );
   }

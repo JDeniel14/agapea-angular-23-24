@@ -79,20 +79,23 @@
 
 <div class="container">
   <div class="row">
-    <div class="col-3" *ngIf="this.showPanel !=='' ">
+    <div class="col-3" *ngIf="showPanel !=='' ">
       <!-- columna para mostar panel de tienda o cliente -->
-      <ng-container *ngSwitch="this.showPanel">
-        <app-panelcliente *ngSwitchCase="'panelCliente'"></app-panelcliente>
-        <app-paneltienda *ngSwitchCase="'panelTienda'"></app-paneltienda>
-        <!--  @switch (this.showPanel) {
+      <h1>{{showPanel}}</h1>
+      <!--<ng-container *ngSwitch="showPanel">
+
+        <app-panelcliente *ngSwitchCase="'panelCliente'"><h2>hola cliente</h2></app-panelcliente>
+        <app-paneltienda *ngSwitchCase="'panelTienda'"></app-paneltienda>-->
+          @switch (this.showPanel) {
         @case ('panelCliente') {
           <app-panelcliente></app-panelcliente>
         }
         @case ('panelTienda') {
+          
           <app-paneltienda ></app-paneltienda>
         }
-      }-->
-      </ng-container>
+          }
+      <!--</ng-container>-->
     </div>
 
     <div class="col-9">

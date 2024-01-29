@@ -18,13 +18,14 @@
 
 
       @if (_listacategorias) {
+
         @for (cat of _listacategorias; track $index) {
 
-            <a id="{{cat.IdCategoria}}"
-              className="list-group-item list-group-item-action border border-end-0 border-start-0 text-dark">
+            <a href="http://localhost:4200/Cliente/{{cat.split(' ')[0]}}{{cat.split(' ')[1]}}" class="btn"
+              className="list-group-item list-group-item-action border border-end-0 border-start-0 text-dark ">
               {{cat}}
             </a>
-
+            <br>
         }
       }
       </div>
