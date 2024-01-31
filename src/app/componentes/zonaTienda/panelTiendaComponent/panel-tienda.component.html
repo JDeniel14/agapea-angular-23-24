@@ -1,0 +1,12 @@
+<h6 class="text-dark mt-4 ms-3">CATEGORÍAS</h6>
+<div class="list-group">
+  @for(cat of this.listaCategorias$ | async ;track cat.IdCategoria){
+  <a [routerLink]="['/Tienda/Libros',cat.IdCategoria]"
+    class="list-group-item list-group-item-action border border-end-0 border-start-0 text-dark">
+    {{cat.NombreCategoria}}
+  </a>
+  }
+  @empty {
+  <p>No hay categorías</p>
+  }
+</div>

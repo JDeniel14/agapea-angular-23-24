@@ -1,0 +1,46 @@
+<!--
+  MODIFICAR VISTA USANDO:
+      en lugar de *ngif;else <---- @if(){...}@else
+      en lugar de *ngfor <--- @for() <==== usar observable con async
+
+
+-->
+
+<div class="container">
+  <!-- sintaxis previa a angular17
+
+  <div class="row" *ngIf="this.listaLibros.length !==0; else sinlibros">
+      <div class="row">
+              <div class="col-4" *ngFor="let unlibro of this.listaLibros">
+                  <app-minilibro [libroAPintar]="unlibro"></app-minilibro>
+              </div>
+      </div>
+  </div>
+
+  <ng-template #sinlibros>
+      <div class="row">
+          <div class="col">
+              <p>No se han encontrado LIBROS de esa categoria...intantalo de nuevo con otra</p>
+          </div>
+      </div>
+  </ng-template>-->
+
+  <!-- Sintaxis angular 17 -->
+  @if((this.listaLibrosEvent$ | async)?.length !== 0){
+  <div class="row">
+    <div class="row">
+      @for(libro of (listaLibrosEvent$ | async); track libro){
+      <div class="col-4">
+        <app-minilibro [libroAPintar]="libro"></app-minilibro>
+      </div>
+      }
+    </div>
+  </div>
+  }@else {
+  <div class="row">
+    <div class="col">
+      <p>No se han encontrado LIBROS de esa categoria...intantalo de nuevo con otra</p>
+    </div>
+  </div>
+  }
+</div>

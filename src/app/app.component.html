@@ -15,9 +15,16 @@
                   <img src="../assets/images/botonMINIcontacto.png">
                 </a>
                 <!-- si hay un objeto sesion CLIENTE muestro el boton con su email y nombre y apellidos para q acceda a su PANEL, sino al LOGIN-->
+                @if ((this.clienteLogged$ |async)?.apellidos) {
+                <a [routerLink]="['/Cliente/Panel/InicioPanel']" routerLinkActive="router-link-active"
+                  class="btn br-negro btn-sm">
+                  <span style="color:white">{{(this.clienteLogged$ | async)?.cuenta?.email}}</span>
+                </a>
+                }@else {
                 <a href="http://localhost:4200/Cliente/Login" class="btn bg-negro btn-sm p-0">
                   <img src="../assets/images/botonMINIlogin.png">
                 </a>
+                }
               </div>
             </div>
             <div class="col-1"></div>
@@ -28,7 +35,7 @@
           <div class="row p-2" style="margin-left: 8%;margin-right: 8% ">
             <!-- Mi cuenta -->
             <div class="col-3 d-flex align-content-center justify-content-center" style="padding-left: 5%">
-              <a class="p-1" [routerLink]="['/Tienda/Libros']" routerLinkActive="router-link-active">
+              <a class="p-1" [routerLink]="['/Tienda/Libros/2-10']" routerLinkActive="router-link-active">
                 <img src="../assets/images/agapea-logo.PNG " alt="" width="auto" height="45" />
               </a>
             </div>
@@ -53,7 +60,7 @@
             <div class="col-4 p-0 pe-5 d-flex justify-content-center">
               <div class="h-100">
                 <!-- mini carrito -->
-                <a href="http://localhost:4200/Pedido/MostrarPedido"
+                <a href="http://localhost:4200/Tienda/MostrarPedido"
                   class="d-flex flex-row align-items-center h-100 bg-white border border-1 btn btn-light p-1">
                   <div class="position-relative mx-2">
                     <!--<img src="~/images/boton_mini_carrito.png" />--><i class="fa-solid fa-cart-shopping fa-xl"></i>
@@ -79,34 +86,52 @@
 
 <div class="container">
   <div class="row">
-    <div class="col-3" *ngIf="showPanel !=='' ">
-      <!-- columna para mostar panel de tienda o cliente -->
-      <h1>{{showPanel}}</h1>
-      <!--<ng-container *ngSwitch="showPanel">
-
+    <!--<div class="col-3" *ngIf="showPanel !=='' ">-->
+    <!-- columna para mostar panel de tienda o cliente -->
+    <!--<ng-container *ngSwitch="showPanel">
         <app-panelcliente *ngSwitchCase="'panelCliente'"><h2>hola cliente</h2></app-panelcliente>
         <app-paneltienda *ngSwitchCase="'panelTienda'"></app-paneltienda>-->
-          @switch (this.showPanel) {
-        @case ('panelCliente') {
-          <app-panelcliente></app-panelcliente>
-        }
-        @case ('panelTienda') {
-          
-          <app-paneltienda ></app-paneltienda>
-        }
-          }
-      <!--</ng-container>-->
-    </div>
+    <!--</ng-container>-->
 
+    @if (!(this.routerEvent$ | async)!.url.match(this.patron) ) {
+
+    <!-- <--- async es una pipe que se suscribe a un Observable o Promise y devuelve el último valor que ha emitido
+                                          Cuando el componente se destruye, la tubería asíncrona se desuscribe automáticamente-->
+
+    <!-- tengo que mostrar paneles de tienda o panel cliente -->
+
+    @if(this.showPanel=='panelCliente')
+    {
+    <div class="col-3">
+      <app-panelcliente></app-panelcliente>
+    </div>
     <div class="col-9">
-      <!-- columna para vistas de componentes-->
-      <!-- selector donde el modulo de enrutamiento incrusta la vista del componente requerido por el cliente en la url-->
+      <router-outlet />
+    </div>
+    }@else {
+    <div class="col-3">
+      <app-panel-tienda></app-panel-tienda>
+    </div>
+    <div class="col-9">
+      <router-outlet />
+    </div>
+    }
+
+
+
+    }@else {
+    <div class="col-12">
+
       <router-outlet></router-outlet>
     </div>
+    }
+
+
+
   </div>
 </div>
 <footer class=" border-t-2 mt-4">
   <div className="container ">
     &copy; 2025 - Agapea_angular_mvc_23_24 - Privacy
-</div>
+  </div>
 </footer>

@@ -1,0 +1,68 @@
+<div class="container">
+  <div class="row">
+    @if((this.clientelogged$ | async)?.apellidos ){
+      <div class="col-7">
+
+      </div>
+    }@else {
+      <div class="col-7">
+        <div class="col">
+            <h3>Debes iniciar sesión primero para poder realizar compras</h3>
+        <div class="d-flex flex-row justify-content-center">
+            <a class="btn btn-md btn-primary" [routerLink]="['/Cliente/Login']" >Iniciar sesión</a>
+        </div>
+    </div>
+</div>
+    }
+    <div class="col-5">
+      <div class="container">
+        <div class="row">
+          <div class="col">
+            <h5><strong>Resumen de la compra</strong></h5>
+          </div>
+
+            @for (item of (this.listaItemsPedido$ | async); track item.libroElemento.ISBN13) {
+              <div class="row">
+                <div class="col">
+                  <app-elementopedido [elemento]="item"  (operarElemEvent)="this.ModificarItemPedido($event)"></app-elementopedido>
+                </div>
+              </div>
+            }@empty {
+              <div class="row">
+                <div class="col"><p>Aún no tienes libros en tu cesta...</p></div>
+              </div>
+            }
+
+          <hr />
+          <div class="row">
+              <div class="col-10"><p><strong>Subtotal:</strong></p></div>
+              <div class="col-2"><p style="color:red">0€</p></div>
+          </div>
+
+          <div class="row">
+              <div class="col-10"><p><strong>Gastos de envío y gestión:</strong></p></div>
+              <div class="col-2"><p style="color:red">2€</p></div>
+          </div>
+
+          <div class="row" style="background-color:grey">
+              <div class="col-10"><p><strong>Total a pagar:</strong></p></div>
+              <div class="col-2"><p style="color:red">0€</p></div>
+          </div>
+
+          <div class="row">
+              <small>El periodo de entrega es de <span style="color:forestgreen">de 24 a 48 horas</span></small>
+          </div>
+
+          <div class="d-flex flex-row justify-content-between">
+              <a class="btn btn-light" [routerLink]="['/Tienda/Libros']" routerLinkActive="router-link-active" >
+                  <i class="fas fa-book" style="color: #1477c2;"></i>Seguir Comprando
+              </a>
+              <button  class="btn btn-light" [routerLink]="['']" routerLinkActive="router-link-active"  disabled="{{((this.clientelogged$ | async) === null)}}">
+                  <i class="fas fa-truck" style="color: #1477c2;"></i> Finalizar Pedido
+              </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

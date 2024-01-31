@@ -3,6 +3,9 @@ import { Injectable } from '@angular/core';
 import { ICliente } from '../modelos/cliente';
 import { Observable, lastValueFrom } from 'rxjs';
 import { IRestMessage } from '../modelos/restMessage';
+import { ILibro } from '../modelos/libro';
+import { observableToBeFn } from 'rxjs/internal/testing/TestScheduler';
+import { ICategoria } from '../modelos/categoria';
 
 
 /**
@@ -17,7 +20,7 @@ export class RestnodeService {
    * Si usamos JS y fetch api, puede comportarse de manera extraña, es recomendable usar siempre las clases de Angular
    */
   constructor(private _httpClient:HttpClient) { }
-
+//#region  ---- metodos para zona cliente
   public LoginCliente(credenciales:{email:string,password:string}):Promise<IRestMessage>{
     //buscar como se hace para mandar objeto "credencialees" que pasa el componente login.component.ts
     //a nodejs usando el servicio HTTPCLIENT en angular
@@ -77,15 +80,25 @@ export class RestnodeService {
 
     ) as Observable<IRestMessage>;
   }
+//#endregion
 
-  public RecuperarCategorias(idCategoria?:string):Promise<IRestMessage>{
+//#region  ---- metodos para zona tienda
+  public RecuperarCategorias(idcat:string):Observable<ICategoria[]>{
 
-    if( typeof(idCategoria)==='undefined'){
-      idCategoria='padres'
-    }
-    return lastValueFrom(this._httpClient.get<IRestMessage>(
-      `http://localhost:3000/api/Tienda/RecuperarCategorias?id=${idCategoria}`
-    )
-     );
+    if(!! idcat ) idcat='raices';
+    return this._httpClient.get<ICategoria[]>(`http://localhost:3000/api/Tienda/RecuperarCategorias?idcat=${idcat}`);
+
   }
+
+  public  RecuperarLibros(idcat:string): Observable<ILibro[]>{
+
+    if(!! idcat)idcat="2-10";
+    return  this._httpClient.get<ILibro[]>(`http://localhost:3000/api/Tienda/RecuperarLibros?idcat=${idcat}`)
+  }
+
+  public  RecuperarUnLibro(isbn:string):Observable<ILibro>{
+
+    return this._httpClient.get<ILibro>(`http://localhost:3000/api/Tienda/RecuperarUnLibro?isbn=${isbn}`)
+  }
+  //#endregion
 }

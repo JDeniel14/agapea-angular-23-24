@@ -1,0 +1,91 @@
+<div class="row mt-4 ml-2">
+  <div class="col-8">
+    <div class="mb-3" style="max-width: 540px;" id="cardLibro-@this.libroMostrar.ISBN13">
+      <div class="row g-0">
+        <div class="col-md-4" style="height: 170px">
+          <div class="w-100" style="height: 80%">
+            <a [routerLink]="['/Tienda/MostrarDetallesLibro',this.libroAMostrar?.ISBN13]">
+              <img [src]="this.libroAMostrar?.ImagenLibroBASE64" class="img-fluid rounded-start" alt="...">
+            </a>
+          </div>
+          <a class="btn btn-primary btn-sm" id="btnComprar-{{this.libroAMostrar?.ISBN13}}"
+            style="visibility: hidden;">Comprar</a>
+
+        </div>
+        <div class="col-md-8 ps-1">
+          <div class="ms-3">
+            <h5 class="card-title">{{this.libroAMostrar?.Titulo}}</h5>
+            <h6 class="card-text">{{this.libroAMostrar?.Autores}}</h6>
+            <hr />
+            <h6>Detalles del libro</h6>
+            <div class="row">
+              <div class="col-3">
+                <div class="card-text text-muted">Editorial</div>
+                <div class="card-text text-muted">Edición</div>
+                <div class="card-text text-muted">Páginas</div>
+                @if (this.libroAMostrar?.Dimensiones != "")
+                {
+                <div class="card-text text-muted">Dimensiones</div>
+                }
+                <div class="card-text text-muted">Idioma</div>
+                <div class="card-text text-muted">ISBN</div>
+                <div class="card-text text-muted">ISBN-10</div>
+              </div>
+              <div class="col-9 ps-4">
+                <div class="card-text">{{this.libroAMostrar?.Editorial}}</div>
+                <div class="card-text">{{this.libroAMostrar?.Edicion}}</div>
+                <div class="card-text">{{this.libroAMostrar?.NumeroPaginas }}</div>
+                <div class="card-text">{{this.libroAMostrar?.Dimensiones}}</div>
+                <div class="card-text">{{this.libroAMostrar?.Idioma}}</div>
+                <div class="card-text">{{this.libroAMostrar?.ISBN13}}</div>
+                <div class="card-text">{{this.libroAMostrar?.ISBN10}}</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-4 px-0">
+    <div class="bg-light p-3 border border-1">
+      <div class="container bg-white border border-1 p-2">
+        <div class="d-flex flex-row-reverse align-items-end w-100">
+          <h4 class="mx-2 font-medium" style="font-size: 25px;">€</h4><h2 class="font-medium" style="font-size: 25px;">{{this.libroAMostrar?.Precio}}</h2>
+      </div>
+        <div class="container px-3">
+          <div class="row">
+            <div class="col-4  border-2 border-primary d-flex align-items-center justify-content-center"><img
+                src="../../../../assets/images/iconoMiniBan.PNG" /></div>
+            <div class="col-8  border-2 border-primary border-start-0 d-flex flex-column justify-content-center p-2">
+              <div class="d-flex justify-content-around"><span class="text-primary"><strong>Envío Gratis</strong><i
+                    class="fa-solid fa-circle-info mx-2"></i></span> </div>
+              <div class="d-flex justify-content-around"><span class="text-primary"><small>al comprar este
+                    libro</small></span></div>
+            </div>
+          </div>
+        </div>
+        <div class="d-flex justify-content-center py-3 px-1">
+          <a class="btn btn-primary w-100 p-2" id="btnComprar-{{this.libroAMostrar?.ISBN13}}"
+            (click)="AddLibroPedido()"><i class="fas fa-shopping-cart pe-2"></i><strong> Comprar / Recoger</strong></a>
+        </div>
+        <div class="d-flex flex-row justify-content-between px-1">
+          <a class="btn btn-outline-primary p-2 flex-fill" id="btnListaDeseos-{{this.libroAMostrar?.ISBN13}}"
+            [routerLink]="['/Tienda/MostrarDetallesLibro',this.libroAMostrar?.ISBN13]" style="border-radius: 0px">
+            <small>Agregar a la lista de deseos</small></a>
+
+
+          <a class="btn btn-outline-primary ms-2 border border-1 border-primary position-relative"
+            id="btnLista-@this.libroMostrar.ISBN13" style="border-radius: 0px">
+            <strong>:</strong>
+            <div class="position-absolute top-100 start-0 visually-hidden" id="dropdown-listas" style="width: 150px">
+              <div class="btn btn-outline-primary w-100" style="border-radius: 0px">Agregar nueva lista</div>
+              <div class="btn btn-outline-primary border-top-0 w-100" style="border-radius: 0px">Ver más listas</div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,30 @@
+
+<div class="mb-3" style="max-width: 540px;" id="cardLibro-{{libroAPintar.ISBN13}}">
+
+  <div class="row g-0">
+      <!-- columna para miniimagen del libro y boton comprar-->
+      <div class="col-md-4 text-center" style="height: 170px">
+          <div class="w-100" style="height: 80%">
+              <a [routerLink]="['/Tienda/MostrarLibro/', this.libroAPintar.ISBN13]" routerLinkActive="router-link-active">
+                  <img class="img-fluid rounded-start rounded-end" [src]="libroAPintar.ImagenLibroBASE64" alt="...">
+              </a>
+          </div>
+          <a (click)="AddLibroPedido()"
+             class="btn btn-primary btn-sm">
+              Comprar...
+          </a>
+      </div>
+
+      <!-- columna para titulo del libro, autores, editorial, pags y precio-->
+      <div class="col-md-8">
+          <div class="ms-3">
+              <h6 class="card-title" style="height: 50px"><a class="text-decoration-none" [routerLink]="['/Tienda/MostrarLibro/',this.libroAPintar.ISBN13]" >{{libroAPintar.Titulo}}</a></h6>
+              <div class="card-text">{{libroAPintar.Autores}}</div>
+              <div class="card-text">{{libroAPintar.Editorial}}</div>
+              <div class="card-text"><small class="text-muted">{{libroAPintar.NumeroPaginas}}  páginas</small></div>
+              <div class="card-text"><strong>{{libroAPintar.Precio | redondeocantidad}}€</strong></div>
+          </div>
+      </div>
+
+  </div>
+</div>

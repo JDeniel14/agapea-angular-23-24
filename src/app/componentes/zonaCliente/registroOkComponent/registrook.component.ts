@@ -16,7 +16,7 @@ export class RegistrookComponent implements OnInit, OnDestroy {
 
   public mensajeServer: string = '';
 
- // public obsParams: Observable<string>;
+  // public obsParams: Observable<string>;
   public subParams!: Subscription;
   /**
    *
@@ -26,7 +26,7 @@ export class RegistrookComponent implements OnInit, OnDestroy {
     private router: Router,
     private activatedRoute: ActivatedRoute
   ) {
-   // this.obsParams = new Observable<string>();
+    // this.obsParams = new Observable<string>();
     this.subParams = new Subscription();
   }
 
@@ -80,8 +80,6 @@ export class RegistrookComponent implements OnInit, OnDestroy {
 */
     //#endregion
 
-
-
     //#region  --------------------  CON   OBJETO ACTIVATEDROUTE   ----------------------
 
     /**
@@ -90,7 +88,7 @@ export class RegistrookComponent implements OnInit, OnDestroy {
      * la url actual, ya que la tiene, te subscribes, por cada param. sacas el parametro con la el parametro que recorremos
      * ---> params['nombre_param']
      */
-   /* this.subParams = this.activatedRoute.queryParams.subscribe((params) => {
+    /* this.subParams = this.activatedRoute.queryParams.subscribe((params) => {
       this.mode = params['mode'];
       this.oobCode = params['oobCode'];
       this.apiKey = params['apiKey'];
@@ -104,15 +102,15 @@ export class RegistrookComponent implements OnInit, OnDestroy {
     );
 
     this.ConfirmarEmail(this.mode, this.oobCode, this.apiKey);*/
-     //#endregion
+    //#endregion
 
-     // Usando parametros obtenidos del observable que nos da el servicio ActivatedRoute (detectas cambios constantes en la url):
-      /**
-       * Formato observer, objeto que recibe el metodo subscribe de un observable:
-      */
-     //#region   --------------------  CON   OBJETO ACTIVATEDROUTE  profe  ----------------------
+    // Usando parametros obtenidos del observable que nos da el servicio ActivatedRoute (detectas cambios constantes en la url):
+    /**
+     * Formato observer, objeto que recibe el metodo subscribe de un observable:
+     */
+    //#region   --------------------  CON   OBJETO ACTIVATEDROUTE  profe  ----------------------
 
-/*
+    /*
      this.activatedRoute.queryParamMap.subscribe(
       {
         next:(dato)=>{}, <---- generalmente, solo se pone esta en la subscripcion
@@ -120,16 +118,16 @@ export class RegistrookComponent implements OnInit, OnDestroy {
         complete:()=>{}
       }
      );*/
-     //#endregion
+    //#endregion
 
-     //para manejar observables anidados (nested-observables, manejar operadores: concatMap, mergeMap, switchMap, exhaustMap)
-     /**
-      * ConcatMap -> coge uno y espera que acabe, coge otro y espera que acabe, etc, no muestra el siguiente valor hasta que no acabe el observable por el que va
-      * MegeMap -> Fusiona los observables, da todos los valores de los observables mezclados
-      * SwitchMap -> salta de un observable a otro, recibes datos del primero, si recibe datos de otro observable cambia a ese observable
-      * exhaustMap -> Es parecido al SwitchMap, pero hasta que no se completan los valores del observable no cambia de observable
-      */
-   /* this.subParams = this.activatedRoute.queryParamMap.subscribe(
+    //para manejar observables anidados (nested-observables, manejar operadores: concatMap, mergeMap, switchMap, exhaustMap)
+    /**
+     * ConcatMap -> coge uno y espera que acabe, coge otro y espera que acabe, etc, no muestra el siguiente valor hasta que no acabe el observable por el que va
+     * MegeMap -> Fusiona los observables, da todos los valores de los observables mezclados
+     * SwitchMap -> salta de un observable a otro, recibes datos del primero, si recibe datos de otro observable cambia a ese observable
+     * exhaustMap -> Es parecido al SwitchMap, pero hasta que no se completan los valores del observable no cambia de observable
+     */
+    /* this.subParams = this.activatedRoute.queryParamMap.subscribe(
       (parametros:ParamMap)=>{
         let _mode:string|null =parametros.get('mode');
         let _oobCode:string|null = parametros.get('oobCode');
@@ -149,27 +147,27 @@ export class RegistrookComponent implements OnInit, OnDestroy {
       }
      );*/
 
-     this.subParams = this.activatedRoute
-                          .queryParamMap
-                          .pipe(
-                              tap((parametros:ParamMap) =>
-                                console.log('parametros en la url....', parametros.keys)),
-                                concatMap( (parametros:ParamMap) => {
-                                let _mode:string|null =parametros.get('mode');
-                                let _oobCode:string|null = parametros.get('oobCode');
-                                let _apiKey :string|null = parametros.get('apiKey');
+    this.subParams = this.activatedRoute.queryParamMap
+      .pipe(
+        tap((parametros: ParamMap) =>
+          console.log('parametros en la url....', parametros.keys)
+        ),
+        concatMap((parametros: ParamMap) => {
+          let _mode: string | null = parametros.get('mode');
+          let _oobCode: string | null = parametros.get('oobCode');
+          let _apiKey: string | null = parametros.get('apiKey');
 
-                                return this.restSvc.ActivarCuenta(_mode,_oobCode,_apiKey)
-                              } )
-                        ).subscribe( (resp:IRestMessage) => {
-                          if(resp.codigo === 0){
-                            this.mensajeServer = resp.mensaje;
-                            this.router.navigateByUrl('/Cliente/Login');
-                          }else{
-                            this.mensajeServer = resp.mensaje;
-                          }
-                        });
-                        
+          return this.restSvc.ActivarCuenta(_mode, _oobCode, _apiKey);
+        })
+      )
+      .subscribe((resp: IRestMessage) => {
+        if (resp.codigo === 0) {
+          this.mensajeServer = resp.mensaje;
+          this.router.navigateByUrl('/Cliente/Login');
+        } else {
+          this.mensajeServer = resp.mensaje;
+        }
+      });
   }
 
   ngOnDestroy(): void {

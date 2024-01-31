@@ -29,7 +29,21 @@ import { ComprobacionexisteemailDirective } from './directivas/comprobacionexist
 import { RestnodeService } from './servicios/restnode.service';
 import { RegistrookComponent } from './componentes/zonaCliente/registroOkComponent/registrook.component';
 import { PanelclienteComponent } from './componentes/zonaCliente/panelClienteComponent/panelcliente.component';
-import { PaneltiendaComponent } from './componentes/zonaCliente/panelTiendaComponent/paneltienda.component';
+
+import { RedondeocantidadPipe } from './pipes/redondeocantidad.pipe';
+import { LibrosComponent } from './componentes/zonaTienda/librosComponent/libros.component';
+import { DetalleslibroComponent } from './componentes/zonaTienda/mostrarDetallesLibroComponent/detalleslibro.component';
+import { MinilibroComponent } from './componentes/zonaTienda/minilibroComponent/minilibro.component';
+import { PanelTiendaComponent } from './componentes/zonaTienda/panelTiendaComponent/panel-tienda.component';
+import { SubjectStorageService } from './servicios/subject-storage.service';
+import { MI_TOKEN_SERVICIOSTORAGE } from './servicios/injectiontokenstorageservices';
+import { MostrarpedidoComponent } from './componentes/zonaTienda/mostrarPedidoComponent/mostrarpedido.component';
+import { ElementopedidoComponent } from './componentes/zonaTienda/miniElementoPedidoComponent/elementopedido.component';
+
+
+
+
+
 
 
 
@@ -42,7 +56,18 @@ import { PaneltiendaComponent } from './componentes/zonaCliente/panelTiendaCompo
     ComprobacionexisteemailDirective,
     RegistrookComponent,
     PanelclienteComponent,
-    PaneltiendaComponent,
+    RedondeocantidadPipe,
+    LibrosComponent,
+    DetalleslibroComponent,
+    MinilibroComponent,
+    PanelTiendaComponent,
+    MostrarpedidoComponent,
+    ElementopedidoComponent,
+
+
+
+
+
 
   ],
   imports: [ //<------- array con la definicion de los modulos secundarios que la aplicacion va a usar
@@ -61,7 +86,8 @@ import { PaneltiendaComponent } from './componentes/zonaCliente/panelTiendaCompo
    * Estos comunican los componentes sin relacion directa
    */
   providers: [
-    RestnodeService
+    RestnodeService,
+    {provide: MI_TOKEN_SERVICIOSTORAGE, useClass: SubjectStorageService},
 ], // <---- array para definir inyeccion de dependencias de servicios usados por componentes
   bootstrap: [AppComponent]
 })
