@@ -5,7 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 
 //HttpClientModule: modulo encargado de dar inyeccion de servicios comuner para hacer pet.HTTP externas
 //usando servicio HttpClient... tb permite definicion de INTERCEPTORS (inter. son servicios que intercepta una solicitud, la transforma y la manda)
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 //ReactiveFormsModule: modulo donde se definen directivas a usar en vistas de componente para mapear objetos FormGroup y FormControl
 //contra elementos del dom (directivas formGroup y formControlName)
 import {FormsModule, ReactiveFormsModule} from '@angular/forms'
@@ -39,6 +39,10 @@ import { SubjectStorageService } from './servicios/subject-storage.service';
 import { MI_TOKEN_SERVICIOSTORAGE } from './servicios/injectiontokenstorageservices';
 import { MostrarpedidoComponent } from './componentes/zonaTienda/mostrarPedidoComponent/mostrarpedido.component';
 import { ElementopedidoComponent } from './componentes/zonaTienda/miniElementoPedidoComponent/elementopedido.component';
+import { DatosenvioComponent } from './componentes/zonaTienda/datoEnvioComponent/datosenvio.component';
+import { DatosfacturacionComponent } from './componentes/zonaTienda/datosFacturacionComponent/datosfacturacion.component';
+import { DatospagoComponent } from './componentes/zonaTienda/datosPagoComponent/datospago.component';
+import { AuthjwtInterceptor } from './servicios_INTERCEPTORS/authjwt.interceptor';
 
 
 
@@ -63,6 +67,9 @@ import { ElementopedidoComponent } from './componentes/zonaTienda/miniElementoPe
     PanelTiendaComponent,
     MostrarpedidoComponent,
     ElementopedidoComponent,
+    DatosenvioComponent,
+    DatosfacturacionComponent,
+    DatospagoComponent,
 
 
 
@@ -88,6 +95,7 @@ import { ElementopedidoComponent } from './componentes/zonaTienda/miniElementoPe
   providers: [
     RestnodeService,
     {provide: MI_TOKEN_SERVICIOSTORAGE, useClass: SubjectStorageService},
+    {provide: HTTP_INTERCEPTORS, useClass: AuthjwtInterceptor, multi: true}
 ], // <---- array para definir inyeccion de dependencias de servicios usados por componentes
   bootstrap: [AppComponent]
 })

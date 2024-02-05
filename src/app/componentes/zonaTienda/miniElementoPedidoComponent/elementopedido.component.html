@@ -27,8 +27,8 @@
               <strong>+</strong>
             </a>
 
-            <label><small>x</small><span style="color:red">{{this.elemento.libroElemento.Precio}}€</span></label>
-            <label style="color:red">({{this.elemento.libroElemento.Precio * this.elemento.cantidadElemento}})€</label>
+            <label><small>x</small><span style="color:red">{{this.elemento.libroElemento.Precio | redondeocantidad}}€</span></label>
+            <label style="color:red">{{(this.elemento.libroElemento.Precio * this.elemento.cantidadElemento) | redondeocantidad}}€</label>
           </div>
         </div>
       </div>

@@ -29,7 +29,7 @@ export class AppComponent implements OnDestroy {
   public patronPanelCliente: RegExp = new RegExp('(/Cliente/Panel/*)');
   public patronPanelTienda: RegExp = new RegExp('(/Tienda/)');
 
-  public clienteLogged$: Observable<ICliente>;
+  public clienteLogged$: Observable<ICliente | null>;
 
   constructor(
     private activatedRoute: ActivatedRoute,

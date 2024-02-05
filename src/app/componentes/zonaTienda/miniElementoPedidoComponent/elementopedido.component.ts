@@ -14,8 +14,7 @@ export class ElementopedidoComponent {
     libroElemento: ILibro;
     cantidadElemento: number;} = {} as { libroElemento: ILibro; cantidadElemento: number };
 
-  @Output() public operarElemEvent: EventEmitter<
-    KeyValue<string, { libroElemento: ILibro; cantidadElemento: number }>> = new EventEmitter<KeyValue<string, { libroElemento: ILibro; cantidadElemento: number }>>();
+  @Output() public operarElemEvent: EventEmitter<KeyValue<string, { libroElemento: ILibro; cantidadElemento: number }>> = new EventEmitter<KeyValue<string, { libroElemento: ILibro; cantidadElemento: number }>>();
 
   constructor(
     @Inject(MI_TOKEN_SERVICIOSTORAGE) private storageSvc: IStorageService
@@ -27,11 +26,11 @@ export class ElementopedidoComponent {
     switch (operacion) {
       case 'sumar':
         this.elemento.cantidadElemento += 1;
-        operacion = 'modificar';
+
         break;
       case 'restar':
         this.elemento.cantidadElemento -= 1;
-        operacion = 'modificar';
+
         break;
 
       case 'borrar':
@@ -41,6 +40,7 @@ export class ElementopedidoComponent {
       default:
         break;
     }
+    operacion = operacion != "borrar" ? "modificar" : operacion;
     this.operarElemEvent.emit({ key: operacion, value: this.elemento });
   }
 }

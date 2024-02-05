@@ -8,16 +8,9 @@ import { ILibro } from '../modelos/libro';
   providedIn: 'root',
 })
 export class SubjectStorageService implements IStorageService {
-  private _clienteSubject$: BehaviorSubject<ICliente> =
-    new BehaviorSubject<ICliente>({} as ICliente);
-  private _jwtSubject$: BehaviorSubject<string> = new BehaviorSubject<string>(
-    ''
-  );
-  private _elementosPedidoSubject$: BehaviorSubject<
-    { libroElemento: ILibro; cantidadElemento: number }[]
-  > = new BehaviorSubject<
-    { libroElemento: ILibro; cantidadElemento: number }[]
-  >([]);
+  private _clienteSubject$: BehaviorSubject<ICliente | null> = new BehaviorSubject<ICliente | null>(null);
+  private _jwtSubject$: BehaviorSubject<string> = new BehaviorSubject<string>('');
+  private _elementosPedidoSubject$: BehaviorSubject<{ libroElemento: ILibro; cantidadElemento: number }[]> = new BehaviorSubject<{ libroElemento: ILibro; cantidadElemento: number }[]>([]);
 
   constructor() {}
 
@@ -27,7 +20,7 @@ export class SubjectStorageService implements IStorageService {
   AlmacenarJWT(jwt: string): void {
     this._jwtSubject$.next(jwt);
   }
-  RecuperarDatosCliente(): Observable<ICliente> {
+  RecuperarDatosCliente(): Observable<ICliente | null > {
     return this._clienteSubject$.asObservable(); //devuelvo el observable
   }
   RecuperarJWT(): Observable<string> {
@@ -35,14 +28,13 @@ export class SubjectStorageService implements IStorageService {
   }
 
   OperarItemsPedido(libro: ILibro, cantidad: number, operacion: string): void {
+    //con la propiedad .value del subject te ahorras tener una variable intermedia y subscribirte al observable
     let _posItem = this._elementosPedidoSubject$.value.findIndex(
-      (item) => item.libroElemento.ISBN13 === libro.ISBN13
-    );
+      (item) => item.libroElemento.ISBN13 === libro.ISBN13);
     switch (operacion) {
       case 'añadir':
         if (_posItem != -1) {
-          this._elementosPedidoSubject$.value[_posItem].cantidadElemento +=
-            cantidad;
+          this._elementosPedidoSubject$.value[_posItem].cantidadElemento +=cantidad;
         } else {
           this._elementosPedidoSubject$.value.push({
             libroElemento: libro,
@@ -62,8 +54,7 @@ export class SubjectStorageService implements IStorageService {
           if (
             this._elementosPedidoSubject$.value[_posItem].cantidadElemento != 0
           ) {
-            this._elementosPedidoSubject$.value[_posItem].cantidadElemento =
-              cantidad;
+            this._elementosPedidoSubject$.value[_posItem].cantidadElemento =cantidad;
           } else {
             this._elementosPedidoSubject$.value.splice(_posItem, 1);
           }
@@ -74,9 +65,7 @@ export class SubjectStorageService implements IStorageService {
         break;
     }
   }
-  RecuperarItemsPedido(): Observable<
-    { libroElemento: ILibro; cantidadElemento: number }[]
-  > {
+  RecuperarItemsPedido(): Observable<{ libroElemento: ILibro; cantidadElemento: number }[]> {
     return this._elementosPedidoSubject$.asObservable();
   }
 }

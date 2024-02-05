@@ -6,6 +6,8 @@ import { IRestMessage } from '../modelos/restMessage';
 import { ILibro } from '../modelos/libro';
 import { observableToBeFn } from 'rxjs/internal/testing/TestScheduler';
 import { ICategoria } from '../modelos/categoria';
+import { IProvincia } from '../modelos/provincia';
+import { IMunicipio } from '../modelos/municipio';
 
 
 /**
@@ -99,6 +101,19 @@ export class RestnodeService {
   public  RecuperarUnLibro(isbn:string):Observable<ILibro>{
 
     return this._httpClient.get<ILibro>(`http://localhost:3000/api/Tienda/RecuperarUnLibro?isbn=${isbn}`)
+  }
+
+  public RecuperarProvincias():Observable<IProvincia[]>{
+    return this._httpClient.post<IProvincia[]>('http://localhost:3000/api/Tienda/RecuperarProvincias',
+        {
+          headers: new HttpHeaders({'Content-Type' : 'application/json'})
+        }
+    )
+  }
+
+  public RecuperarMunicipios(codpro:string):Observable<IMunicipio[]>{
+
+    return this._httpClient.get<IMunicipio[]>(`http://localhost:3000/api/Tienda/RecuperarMunicipios?codpro=${codpro}`);
   }
   //#endregion
 }

@@ -22,7 +22,9 @@ export class LoginComponent {
     private router: Router,
     private restService: RestnodeService,
     @Inject(MI_TOKEN_SERVICIOSTORAGE) private storageSvc: IStorageService
-  ) {}
+  ) {
+    console.log(this.credenciales)
+  }
 
   irARegistro() {
     this.router.navigateByUrl('/Cliente/Registro');
@@ -37,7 +39,7 @@ export class LoginComponent {
     if (_respuesta.codigo === 0) {
       let datosCliente: ICliente = _respuesta.datoscliente as ICliente;
       this.storageSvc.AlmacenarDatosCliente(datosCliente);
-
+      this.storageSvc.AlmacenarJWT(_respuesta.token as string)
       console.log(_respuesta);
       this.router.navigateByUrl('/Tienda/Libros/2-10');
     } else {

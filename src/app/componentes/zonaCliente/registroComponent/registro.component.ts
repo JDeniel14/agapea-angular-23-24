@@ -13,9 +13,11 @@ import { IRestMessage } from '../../../modelos/restMessage';
   styleUrl: './registro.component.css',
 })
 export class RegistroComponent implements OnDestroy {
+  
   public miForm: FormGroup;
   public observableRegistro: Observable<IRestMessage>;
   public subcriptionRegistro: Subscription;
+
   constructor(private restService: RestnodeService, private router: Router) {
     this.observableRegistro = new Observable<IRestMessage>();
     this.subcriptionRegistro = new Subscription();

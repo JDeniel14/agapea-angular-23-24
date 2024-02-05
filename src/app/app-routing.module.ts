@@ -6,6 +6,7 @@ import { RegistrookComponent } from './componentes/zonaCliente/registroOkCompone
 import { LibrosComponent } from './componentes/zonaTienda/librosComponent/libros.component';
 import { DetalleslibroComponent } from './componentes/zonaTienda/mostrarDetallesLibroComponent/detalleslibro.component';
 import { MostrarpedidoComponent } from './componentes/zonaTienda/mostrarPedidoComponent/mostrarpedido.component';
+import { AccesoPedidoGuard } from './servicios_GUARDS/acceso-pedido.guard';
 
 
 // modulo principal de entutamiento usado por el modulo global de la aplicacion app.module.ts
@@ -28,7 +29,7 @@ const routes: Routes = [
     children: [
       {path: 'Libros/:idcat?', component: LibrosComponent},
       {path : 'MostrarLibro/:isbn', component:DetalleslibroComponent },
-      {path: 'MostrarPedido', component:MostrarpedidoComponent}
+      {path: 'MostrarPedido', component:MostrarpedidoComponent, canActivate:[AccesoPedidoGuard]}
     ]
   },
   { path: '', redirectTo: '/Tienda/Libros/2-10', pathMatch: 'full' },

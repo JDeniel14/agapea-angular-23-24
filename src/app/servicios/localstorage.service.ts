@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { IStorageService } from '../modelos/interfaceservicios';
 import { ICliente } from '../modelos/cliente';
 import { Observable, of } from 'rxjs';
+import { ILibro } from '../modelos/libro';
 
 @Injectable({
   providedIn: 'root'
@@ -9,6 +10,12 @@ import { Observable, of } from 'rxjs';
 export class LocalstorageService implements IStorageService{
 
   constructor() { }
+  OperarItemsPedido(libro: ILibro, cantidad: number, operacion: string): void {
+    throw new Error('Method not implemented.');
+  }
+  RecuperarItemsPedido(): Observable<{ libroElemento: ILibro; cantidadElemento: number; }[]> {
+    throw new Error('Method not implemented.');
+  }
 
   AlmacenarDatosCliente(datoscliente: ICliente): void {
     localStorage.setItem('datoscliente', JSON.stringify(datoscliente))
@@ -16,7 +23,7 @@ export class LocalstorageService implements IStorageService{
   AlmacenarJWT(jwt: string): void {
     localStorage.setItem('datoscliente', jwt)
   }
-  RecuperarDatosCliente(): Observable<ICliente> {
+  RecuperarDatosCliente(): Observable<ICliente | null> {
     let _datoscliente:ICliente = (JSON.parse(localStorage.getItem('datoscliente')! ))as ICliente;
     return of(_datoscliente); //el operador of ...
   }
