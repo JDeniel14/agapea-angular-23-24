@@ -4,16 +4,19 @@
 </div>
 
 <!-- fila de radios para seleccionar direccion principal de envio del cliente u otra nueva... -->
-<form [formGroup]="formDatosEnvio">
 <div class="row">
-
-  <!-- no me pilla estos alias def. en el if ¿¿??
-  @if (this.datosCliente$ | async; as datosCliente && datosCliente.direcciones.filter(d => d.esPrincipal == true)[0] as direccionprincipal) {  ; as datosCliente es un alias, se puede hacer-->
-    @if(this.direccioprincipal != undefined){
+  <!-- no me pilla estos alias def.en el if ¿¿??
+  @if (
+        this.datosCliente$ | async; as datoscliente &&
+        datoscliente.direcciones.filter(d=>d.esPrincipal==true)[0] as direccionprincipal
+        )
+        -->
+  @if(this.direccionprincipal != undefined )
+  {
       <div class="form-check">
-          <input class="form-check-input" type="radio" name="direccionradios" id="direccionprincipal" value="direccionprincipal" checked (change)="this.CheckdirPpalEnvio(false)"/>
+          <input class="form-check-input" type="radio" name="direccionradios" id="direccionprincipal" value="direccionprincipal" checked (change)="this.CheckdirPpalEnvio(true)"/>
           <label class="form-check-label" for="direccionprincipal">
-              {{this.direccioprincipal.calle}}. {{this.direccioprincipal.municipio.DMUN50}}, {{this.direccioprincipal.provincia.PRO}} CP: {{this.direccioprincipal.cp}} {{this.direccioprincipal.pais}}
+              {{direccionprincipal.calle}}. {{direccionprincipal.municipio.DMUN50}}, {{direccionprincipal.provincia.PRO}} CP: {{direccionprincipal.cp}} {{direccionprincipal.pais}}
           </label>
       </div>
   }
@@ -24,7 +27,7 @@
       </label>
   </div>
   <div class="form-check">
-      <input class="form-check-input" type="radio" name="direccionradios" id="direccionotra" value="otradireccion" (change)="this.CheckdirPpalEnvio(true)" />
+      <input class="form-check-input" type="radio" name="direccionradios" id="direccionotra" [checked]="!this.checkdirppalenvio" value="otradireccion" (change)="this.CheckdirPpalEnvio(false)" />
       <label class="form-check-label" for="direccionotra">
           Recibir en otra direccion
       </label>
@@ -33,7 +36,7 @@
 </div>
 
 <!-- fila de campos para nueva direccion envio solo si esta chequeado RADIO OTRA DIRECCION-->
-@if (!this.checkdirppalenvio)
+@if ( ! this.checkdirppalenvio)
 {
   <div class="row mt-2" id="filadireccioncontainer">
 
@@ -41,15 +44,15 @@
           <div class="row">
               <div class="col-6">
                   <label for="inputPais" class="form-label">Pais</label>
-                  <input type="text" class="form-control" id="inputPais" placeholder="España" name="pais" formControlName="pais" />
+                  <input type="text" class="form-control" id="inputPais" placeholder="España" name="pais" [value]="this.datosPago.direccionEnvio?.pais || '' " (input)="this.datosPago.direccionEnvio!.pais=$any($event.target).value" />
               </div>
               <div class="col-6">
                   <label for="inputProvincia" class="form-label">Provincia*</label>
-                  <select id="inputProvincia" class="form-select" name="provincia" formControlName="provincia" (change)="this.CargarMunicipios($any($event.target).value)">
+                  <select id="inputProvincia" class="form-select" name="provincia" (change)="CargarMunicipios($any($event.target).value);">
                       <option value="-1" selected> - Seleccionar Provincia - </option>
-                      @for (unaprov of this.listaProvincias$ |async; track unaprov.CPRO)
+                      @for (unaprov of this.listaProvincias; track unaprov.CPRO)
                       {
-                          <option  [value]="unaprov.CPRO+'-'+unaprov.PRO">{{unaprov.PRO}}</option>
+                          <option [value]="unaprov.CPRO + '-' + unaprov.PRO">{{unaprov.PRO}}</option>
                       }
                   </select>
               </div>
@@ -57,21 +60,24 @@
           <div class='row'>
               <div class="col-6">
                   <label for="inputCalle" class="form-label">Direccion completa*</label>
-                  <input type="text" class="form-control" id="inputCalle" placeholder="Mi Direccion" name="calle" formControlName="calle"/>
+                  <input type="text" class="form-control" id="inputCalle" placeholder="Mi Direccion" name="calle" [value]="this.datosPago.direccionEnvio?.calle || ''" (input)="this.datosPago.direccionEnvio!.calle=$any($event.target).value" />
               </div>
 
               <div class="col-2">
                   <label for="inputCP" class="form-label">Codigo Postal*</label>
-                  <input type="text" class="form-control" id="inputCP" placeholder="Codigo Postal: 28803" name="cp" formControlName="cp" />
+                  <input type="text" class="form-control" id="inputCP" placeholder="Codigo Postal: 28803" name="cp" [value]="this.datosPago.direccionEnvio?.cp || ''" (input)="this.datosPago.direccionEnvio!.cp=$any($event.target).value"/>
               </div>
 
 
               <div class="col-4">
                   <label for="inputMunicipio" class="form-label">Localidad*</label>
-                  <select id="inputMunicipio" class="form-select" name="municipio" formControlName="municipio" [disabled]="this.disabledMuni" >
-                      <option value="-1" selected> - Selecciona un Municipio -</option>
-                      @for(muni of this.listaMunicipios$ | async ; track muni.DMUN50){
-                        <option [value]="muni.CMUM + '-'+muni.DMUN50"  > {{muni.DMUN50}}</option>
+                  <select id="inputMunicipio" class="form-select" name="municipio" disabled #selectmunis (change)="EstableceMunicipio($any($event.target).value)">
+                      @for(unmuni of this.listaMunicipios$ | async; track unmuni.DMUN50)
+                      {
+                          <option [value]="unmuni.CMUM + '-' + unmuni.DMUN50">{{unmuni.DMUN50}}</option>
+                      }
+                      @empty{
+                          <option value="-1" selected> - Selecciona un Municipio -</option>
                       }
                   </select>
               </div>
@@ -84,14 +90,30 @@
 
 
 <!-- fila de radios para seleccionar datos de contacto persona de envio  -->
-<div class="row">
-  <div class="form-check">
-      <input class="form-check-input" type="radio" name="personaenvioradios" id="clienteloggedenvio" value="clienteloggedenvio" checked (change)=" this.CheckClienteLoggedEnvio(true)" />
-      <label class="form-check-label" for="clienteloggedenvio">
-          Datos de usuario registrado
-          {{this.datosCliente?.cuenta?.email}} ( {{this.datosCliente?.cuenta?.login}} )
-      </label>
+@if (this.datosCliente != null)
+{
+  <div class="row">
+      <div class="form-check">
+          <input class="form-check-input" type="radio" name="personaenvioradios" id="clienteloggedenvio" value="clienteloggedenvio" checked (change)="this.CheckClienteLoggedEnvio(true)" />
+          <label class="form-check-label" for="clienteloggedenvio">
+              Datos de usuario registrado
+              {{this.datosCliente.cuenta.email}} ( {{this.datosCliente.cuenta.login}} )
+          </label>
+      </div>
   </div>
+  @if (this.checkclienteloggedenvio)
+  {
+      <div class="row">
+          <div class='col-1'></div>
+          <div class="col-6">
+              <label for="telefonoContacto" class="form-label">Telefono de contacto*</label>
+              <input type="text" class="form-control" id="telefonoContacto" [placeholder]="this.datosCliente.telefono" name="telefonoContacto"  />
+          </div>
+      </div>
+  }
+}
+
+<div class="row">
   <div class="form-check">
       <input class="form-check-input" type="radio" name="personaenvioradios" id="otrapersonaenvio" value="otrapersonaenvio" (change)="this.CheckClienteLoggedEnvio(false)" />
       <label class="form-check-label" for="otrapersonaenvio">
@@ -101,49 +123,42 @@
 </div>
 
 <!-- fila de campos para datos de persona de envio -->
-<div class='row'>
-@if (this.checkclienteloggedenvio)
-  {
-      <div class='col-3'></div>
-      <div class="col-6">
-          <label for="telefonoContacto" class="form-label">Telefono de contacto*</label>
-          <input type="text" class="form-control" id="telefonoContacto" [placeholder]="this.datosCliente?.telefono" name="telefonoContacto" formControlName="telefonoDestinatario" />
+@if (!this.checkclienteloggedenvio){
+      <div class='row'>
+          <div class='col-6'>
+              <label for="nombreEnvio" class="form-label">Nombre*</label>
+              <input type="text" class="form-control" id="nombreEnvio" name="nombreEnvio" [value]="this.datosPago.nombreEnvio ||''" (input)="this.datosPago.nombreEnvio=$any($event.target).value" />
+          </div>
+          <div class='col-6'>
+              <label for="apellidosEnvio" class="form-label">Apellidos*</label>
+              <input type="text" class="form-control" id="apellidosEnvio" name="apellidosEnvio" [value]="this.datosPago.apellidosEnvio ||''" (input)="this.datosPago.apellidosEnvio=$any($event.target).value" />
+          </div>
       </div>
-
-  } @else{
-      <div class='col-6'>
-          <label for="nombreEnvio" class="form-label">Nombre*</label>
-          <input type="text" class="form-control" id="nombreEnvio" name="nombreEnvio" formControlName="nombreDestinatario"  />
+      <div class="row">
+          <div class='col-6'>
+              <label for="emailEnvio" class="form-label">Correo Electronico*</label>
+              <input type="text" class="form-control" id="emailEnvio" name="emailEnvio" [value]="this.datosPago.emailEnvio ||'' " (input)="this.datosPago.emailEnvio=$any($event.target).value" />
+          </div>
+          <div class='col-6'>
+              <label for="telefonoContactoNuevo" class="form-label">Telefono de contacto*</label>
+              <input type="text" class="form-control" id="telefonoContactoNuevo" name="telefonoContacto" [value]="this.datosPago.telefonoEnvio||'' " (input)="this.datosPago.telefonoEnvio=$any($event.target).value" />
+          </div>
       </div>
-      <div class='col-6'>
-          <label for="apellidosEnvio" class="form-label">Apellidos*</label>
-          <input type="text" class="form-control" id="apellidosEnvio" name="apellidosEnvio" formControlName="apellidosDestinatario"  />
-      </div>
-
-      <div class='col-6'>
-          <label for="emailEnvio" class="form-label">Correo Electronico*</label>
-          <input type="text" class="form-control" id="emailEnvio" name="emailEnvio" formControlName="emailDestinatario" />
-      </div>
-      <div class='col-6'>
-          <label for="telefonoContactoNuevo" class="form-label">Telefono de contacto*</label>
-          <input type="text" class="form-control" id="telefonoContactoNuevo" name="telefonoContacto" formControlName="telefonoDestinatario"  />
-      </div>
-
   }
-
+<div class="row">
   <div class='col-12'>
       <label for="otrosDatos" class="form-label">Otros datos de entrega*</label>
-      <input type="text" class="form-control" id="otrosDatos" name="otrosDatos" formControlName="otrosDatos"  />
+      <input type="text" class="form-control" id="otrosDatos" name="otrosDatos" [value]="this.datosPago.otrosDatos ||''" (input)="this.datosPago.otrosDatos=$any($event.target).value"  />
   </div>
 </div>
 
 <div class="row">
   <div class="form-check">
       <input class="form-check-input" type="checkbox" value="" id="checkfactura"
-             (change)="this.ShowComponenteDatosFactura($event)">
+          (change)="this.ShowComponenteDatosFactura($event)">
       <label class="form-check-label" for="checkfactura">
           Deseo Factura
       </label>
   </div>
 </div>
-</form>
+

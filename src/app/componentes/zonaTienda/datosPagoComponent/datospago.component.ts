@@ -7,49 +7,13 @@ import { FormGroup } from '@angular/forms';
   templateUrl: './datospago.component.html',
   styleUrl: './datospago.component.css'
 })
-export class DatospagoComponent implements OnChanges, OnInit{
- @Input() tituloPago!:string | undefined;
- @Input() datosPagoPedido:IDatosPago = {}as IDatosPago;
- @Input() formDatosPedido!:FormGroup;
- public formDatosPago!:FormGroup;
- public anios : number[] = [];
- public meses : number[] = [];
+export class DatospagoComponent {
+  @Input() tituloPago:string="2. - Datos Pago.";
+  @Input()datosPago!:IDatosPago;
 
- public checkPagoTarjeta : boolean = true;
 
- constructor() {
+   meses:number[]=Array.from({length:12}, (el,pos)=> pos+1);
+   //meses:string[]=[ 'Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre' ];
+   anios:number[]=Array.from( { length: new Date(Date.now()).getFullYear() - 1933 }, (el,pos)=> pos + 1934 );
 
-  for(let anio = new Date().getFullYear(); anio <= new Date().getFullYear()+10; anio++){
-    this.anios.push(anio)
-  }
-  for (let mes = 1; mes <= 12; mes++) {
-    this.meses.push(mes);
-  }
- }
-  ngOnInit(): void {
-    if(this.checkPagoTarjeta){
-      this.formDatosPago.patchValue({
-        metodoPago:'Tarjeta'
-      })
-    }
-  }
-
- ChangeCheckPagoTarjeta(check: boolean){
-  this.checkPagoTarjeta = check;
-  if(check){
-    this.formDatosPago.patchValue({
-      metodoPago:'Tarjeta'
-    })
-
-  }else{
-    this.formDatosPago.patchValue({
-      metodoPago:'Paypal'
-    })
-  }
-  console.log(this.checkPagoTarjeta)
- }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    this.formDatosPago = this.formDatosPedido.get('datosPago') as FormGroup;
-  }
 }

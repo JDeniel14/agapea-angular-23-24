@@ -2,88 +2,92 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { ICliente } from '../../../modelos/cliente';
 import { MI_TOKEN_SERVICIOSTORAGE } from '../../../servicios/injectiontokenstorageservices';
 import { IStorageService } from '../../../modelos/interfaceservicios';
-import { Observable } from 'rxjs';
+import { Observable, map, mergeMap } from 'rxjs';
 import { ILibro } from '../../../modelos/libro';
 import { KeyValue } from '@angular/common';
 import { IProvincia } from '../../../modelos/provincia';
 import { RestnodeService } from '../../../servicios/restnode.service';
 import { IDatosPago } from '../../../modelos/datospago';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { IPedido } from '../../../modelos/pedido';
 
 @Component({
   selector: 'app-mostrarpedido',
   templateUrl: './mostrarpedido.component.html',
   styleUrl: './mostrarpedido.component.css',
 })
-export class MostrarpedidoComponent implements OnInit {
-  public clientelogged$: Observable<ICliente | null>;
-  public listaItemsPedido$: Observable<{ libroElemento: ILibro; cantidadElemento: number }[]>;
-  public listaProvincias$ !: Observable<IProvincia[]> ;
+export class MostrarpedidoComponent  {
+  public listaItems$!:Observable<{libroElemento:ILibro, cantidadElemento:number}[]>;
 
-  public checkDatosFacturacion:boolean=false;
+  public subTotal$!:Observable<number>;
+  public gastosEnvio:number=2; //dependera de provincia de direccion envio q esta en objeto datosPago y bla bla bla...
 
-  public datosPagoPedido : IDatosPago = {} as IDatosPago;
+  public listaProvincias$!:Observable<IProvincia[]>;
+  public showcompdatosfacturacion:boolean=false;
+  public datosPago:IDatosPago={  tipodireccionenvio:'principal', tipoDireccionFactura: 'igualenvio', metodoPago:'tarjeta' };
 
+   constructor( @Inject(MI_TOKEN_SERVICIOSTORAGE) private storageSvc:IStorageService,
+                private restSvc:RestnodeService ){
+      this.listaItems$=storageSvc.RecuperarItemsPedido();
+      this.subTotal$=this.listaItems$.pipe(
+                                          map(
+                                            (items:{ libroElemento:ILibro, cantidadElemento:number}[])=> items.reduce( (suma,item)=> suma + (item.libroElemento.Precio * item.cantidadElemento) ,0)
+                                          )
+                                          );
+      this.listaProvincias$=restSvc.RecuperarProvincias();
+   }
+ 
 
-  public formDatosPedido : FormGroup;
+   ShowCompDatosFacturacion(valor:boolean){
+    this.showcompdatosfacturacion=valor;
+   }
 
-  constructor(
-    @Inject(MI_TOKEN_SERVICIOSTORAGE) private storageSvc: IStorageService,
-    private restSvc: RestnodeService
-  ) {
-    this.listaItemsPedido$ = storageSvc.RecuperarItemsPedido();
-    this.clientelogged$ = storageSvc.RecuperarDatosCliente();
-    this.clientelogged$.forEach((c) => console.log(c));
+   ModficarItemPedido( item: [ {libroElemento: ILibro, cantidadElemento:number}, string ]){
 
-    this.formDatosPedido =   new FormGroup(
-      {
-        datosEnvio : new FormGroup({
-            calle: new FormControl('',Validators.required),
-            cp: new FormControl('',Validators.required),
-            pais: new FormControl('',Validators.required),
-            provincia: new FormControl('',Validators.required),
-            municipio: new FormControl('',Validators.required),
-          nombreDestinatario: new FormControl('',Validators.required),
-          apellidosDestinatario: new FormControl('',Validators.required),
-          telefonoDestinatario: new FormControl('',Validators.required),
-          emailDestinatario: new FormControl('',Validators.required),
-          otrosDatos: new FormControl(''),
-        }),
-        datosPago: new FormGroup({
-          metodoPago: new FormControl('',Validators.required),
-          numeroTarjeta: new FormControl('',Validators.required),
-          nombreBanco: new FormControl('',Validators.required),
-          mesCaducidad: new FormControl('',Validators.required),
-          anioCaducidad: new FormControl('',Validators.required),
-          cvv: new FormControl('',Validators.required),
-        })
-      }
-    );
+    let _libro:ILibro=item[0].libroElemento;
+    let _cantidad: number=item[0].cantidadElemento;
 
-  }
-
-  ngOnInit(): void {
-    this.listaProvincias$ = this.restSvc.RecuperarProvincias();
-    this.listaProvincias$.forEach(p => console.log(p))
-  }
-
-  public ModificarItemPedido(
-    datos: KeyValue<string, { libroElemento: ILibro; cantidadElemento: number }>
-  ) {
-    this.storageSvc.OperarItemsPedido(datos.value.libroElemento, datos.value.cantidadElemento, datos.key);
-  }
-
-  ShowDatosFacturacion(valor:boolean){
-    this.checkDatosFacturacion = valor;
-  }
-
-  FinalizarPedido(){
-    console.log('Pedido realizado y registrado...');
-    console.log(this.formDatosPedido)
-    if(this.formDatosPedido.valid){
-      console.log(this.formDatosPedido.value)
-      //hacer peticion al rest para hacer el pago segun el tipo de pago elegido
+    switch (item[1]) {
+      case 'sumar': _cantidad +=1; break;
+      case 'restar': _cantidad -=1; break;
+      case 'borrar': _cantidad=0;  break;
     }
-  }
+    this.storageSvc.OperarItemsPedido(_libro,_cantidad, item[1] != 'borrar' ? 'modificar' : 'borrar');
+   }
+
+   FinalizarPedido(){
+      console.log('finalzando...');
+
+      let _pedidoActual:IPedido={
+          idPedido: window.crypto.randomUUID(),
+          fechaPedido: new Date(Date.now()),
+          estadoPedido: 'pendiente de pago',
+          elementosPedido: []  ,
+          subtotal: 0,
+          gastosEnvio: this.gastosEnvio,
+          totalPedido: 0 + this.gastosEnvio,
+          datosPago: this.datosPago
+        };
+
+        this.listaItems$.pipe(
+                                mergeMap(
+                                  items => {
+                                            _pedidoActual.elementosPedido=items;
+
+                                            let _subtotal=items.reduce( (s,i)=>s + (i.libroElemento.Precio * i.cantidadElemento), 0);
+                                            _pedidoActual.subtotal=_subtotal;
+                                            _pedidoActual.totalPedido=_subtotal + _pedidoActual.gastosEnvio;
+
+                                            return this.storageSvc.RecuperarDatosCliente();
+                                          }
+                                )
+                          ).subscribe(
+                            async clientelog => {
+                                        console.log('datos a mandar a server...',{ pedido: _pedidoActual, email: clientelog!.cuenta.email});
+                                        let _urlObject=await this.restSvc.FinalizarPedido( _pedidoActual, clientelog!.cuenta.email);
+                            }
+                          )
+        }
 
 }
+

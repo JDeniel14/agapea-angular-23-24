@@ -10,20 +10,20 @@
           <div class="d-flex flex-row justify-content-between">
             <h5 class="card-title">{{this.elemento.libroElemento.Titulo}}</h5>
             <!-- boton para eliminar libro de elementos pedido-->
-            <a (click)="this.OperarElemento('borrar')" class="btn btn-light btn-sm">
+            <a (click)="this.OperarItem('borrar')" class="btn btn-light btn-sm">
               <span style="color:red"><strong>X</strong></span>
             </a>
 
           </div>
           <div class="d-flex flex-row justify-content-between">
             <!-- boton +, label cantidad, boton -  el precio del libro y subtotal elemento pedido-->
-            <a (click)="this.OperarElemento('restar')" class="btn btn-outline-primary btn-sm">
+            <a (click)="this.OperarItem('restar')" class="btn btn-outline-primary btn-sm">
               <strong>-</strong>
             </a>
 
             <label><small>{{this.elemento.cantidadElemento}}</small></label>
 
-            <a (click)="this.OperarElemento('sumar')" class="btn btn-outline-primary btn-sm">
+            <a (click)="this.OperarItem('sumar')" class="btn btn-outline-primary btn-sm">
               <strong>+</strong>
             </a>
 

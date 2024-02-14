@@ -11,62 +11,53 @@ import { FormGroup } from '@angular/forms';
   templateUrl: './datosfacturacion.component.html',
   styleUrl: './datosfacturacion.component.css'
 })
-export class DatosfacturacionComponent implements OnChanges, OnInit {
-  @Input() datosPagoPedido:IDatosPago = {}as IDatosPago;
-  @Input() listaProvincias$ !: Observable<IProvincia[]>;
-  @Input() formDatosPedido !: FormGroup;
+export class DatosfacturacionComponent {
+  @Input()listaProvincias!:IProvincia[];
+  @Input()datosPago!:IDatosPago;
 
-  public formDatosFacturacion !: FormGroup;
-  public formDatosEnvio !:FormGroup;
+  @ViewChild('selectmunisfact') selectmunisfact!:ElementRef;
 
+  public checkempresa:boolean=true;
+  public checkmismadirecfactura:boolean=true;
   public listaMunicipios$!:Observable<IMunicipio[]>;
 
-  public checkempresa : boolean = true;
-  public checkmismadirecfactura:boolean = true;
-  public disabledMuni : boolean = true;
+  constructor(private restSvc:RestnodeService, private render2:Renderer2){ }
 
-  @ViewChild("selectmunis") selectmunis!:ElementRef;
-
-  constructor(private restSvc :RestnodeService, private render2:Renderer2) {
-
-  }
-  ngOnInit(): void {
-    this.render2.setAttribute(this.selectmunis.nativeElement, 'disabled', "true");
+  ngOnChanges(){
+    if(this.checkmismadirecfactura) this.datosPago.direccionFacturacion=this.datosPago.direccionEnvio;
   }
 
+  CheckEmpresaChange(valor:boolean){
+    this.checkempresa=valor;
+  }
 
-  CheckEmpresaChange(check:boolean){
-    console.log('checkempresa...',this.checkempresa)
-    this.checkempresa = check;
-    if(check){
-      this.formDatosFacturacion.patchValue({
-        tipoFactura :"Empresa"
-      })
-    }else{
-      this.formDatosFacturacion.patchValue({
-        tipoFactura :"Particular"
-      })
+  ChangeDirecFacturacion(){
+    this.checkmismadirecfactura = ! this.checkmismadirecfactura;
+
+    if(this.checkmismadirecfactura) {
+      this.datosPago.direccionFacturacion=this.datosPago.direccionEnvio;
+    } else {
+      this.datosPago.direccionFacturacion={
+                                            calle:        '',
+                                            pais:         'España',
+                                            cp:           0,
+                                            provincia:    { CCOM:'', PRO:'', CPRO:''},
+                                            municipio:    { CUN:'', CPRO:'', CMUM:'', DMUN50:''},
+                                            esPrincipal:  true,
+                                            esFacturacion: false,
+                                      };
     }
+
+  }
+  CargarMunicipios( provSelec:string){ //<--- va: "cpro - nombre provincia"
+      this.listaMunicipios$=this.restSvc.RecuperarMunicipios(provSelec.split('-')[0]);
+      this.render2.removeAttribute(this.selectmunisfact.nativeElement, 'disabled');
+
+      this.datosPago.direccionFacturacion!.provincia={CCOM:'', CPRO: provSelec.split('-')[0], PRO: provSelec.split('-')[1] };
   }
 
-
-
-  CargarMunicipios(provSelec:string){// <-- va codPro-nombreProv
-    this.listaMunicipios$=this.restSvc.RecuperarMunicipios(provSelec.split('-')[0]);
-    this.render2.removeAttribute(this.selectmunis.nativeElement, 'disabled');
+  EstableceMunicipio( muniSelec: string){
+    this.datosPago.direccionFacturacion!.municipio={CUN:'', CPRO: this.datosPago.direccionFacturacion!.provincia.CPRO, CMUM:muniSelec.split('-')[0] , DMUN50: muniSelec.split('-')[1] };
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    this.formDatosEnvio = this.formDatosPedido.get('datosEnvio') as FormGroup;
-    this.formDatosFacturacion = this.formDatosPedido.get('datosFacturacion') as FormGroup;
-    if(this.checkmismadirecfactura){
-      this.formDatosFacturacion.patchValue({
-        paisFactura : this.formDatosEnvio.get('pais')?.value,
-        calleFactura : this.formDatosEnvio.get('calle')?.value,
-        provinciaFactura : this.formDatosEnvio.get('provincia')?.value,
-        municipioFactura : this.formDatosEnvio.get('municipio')?.value,
-        cpFactura: this.formDatosEnvio.get('cp')?.value,
-      });
-    }
-  }
 }

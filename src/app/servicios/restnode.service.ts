@@ -8,6 +8,7 @@ import { observableToBeFn } from 'rxjs/internal/testing/TestScheduler';
 import { ICategoria } from '../modelos/categoria';
 import { IProvincia } from '../modelos/provincia';
 import { IMunicipio } from '../modelos/municipio';
+import { IPedido } from '../modelos/pedido';
 
 
 /**
@@ -114,6 +115,17 @@ export class RestnodeService {
   public RecuperarMunicipios(codpro:string):Observable<IMunicipio[]>{
 
     return this._httpClient.get<IMunicipio[]>(`http://localhost:3000/api/Tienda/RecuperarMunicipios?codpro=${codpro}`);
+  }
+
+  public FinalizarPedido(pedido : IPedido, email: string):Promise<{url:string}>{
+    return lastValueFrom(
+      this._httpClient
+          .post<{url:string}>(
+            "http://localhost:3000/api/Tienda/FinalizarPedido",
+            { pedido, email},
+            { headers: new HttpHeaders({'Content-Type':'application/json'}) }
+          )
+    );
   }
   //#endregion
 }

@@ -10,37 +10,10 @@ import { KeyValue } from '@angular/common';
   styleUrl: './elementopedido.component.css',
 })
 export class ElementopedidoComponent {
-  @Input() public elemento: {
-    libroElemento: ILibro;
-    cantidadElemento: number;} = {} as { libroElemento: ILibro; cantidadElemento: number };
+  @Input() public elemento!:{libroElemento:ILibro, cantidadElemento:number};
+  @Output() public operarItemEvent:EventEmitter< [ {libroElemento:ILibro, cantidadElemento:number}, string ] >=new EventEmitter< [ {libroElemento:ILibro, cantidadElemento:number}, string ] >();
 
-  @Output() public operarElemEvent: EventEmitter<KeyValue<string, { libroElemento: ILibro; cantidadElemento: number }>> = new EventEmitter<KeyValue<string, { libroElemento: ILibro; cantidadElemento: number }>>();
-
-  constructor(
-    @Inject(MI_TOKEN_SERVICIOSTORAGE) private storageSvc: IStorageService
-  ) {
-    console.log('elemento en pedido ->', this.elemento);
-  }
-
-  public OperarElemento(operacion: string) {
-    switch (operacion) {
-      case 'sumar':
-        this.elemento.cantidadElemento += 1;
-
-        break;
-      case 'restar':
-        this.elemento.cantidadElemento -= 1;
-
-        break;
-
-      case 'borrar':
-        this.elemento.cantidadElemento = 0;
-
-        break;
-      default:
-        break;
-    }
-    operacion = operacion != "borrar" ? "modificar" : operacion;
-    this.operarElemEvent.emit({ key: operacion, value: this.elemento });
+  public OperarItem(operacion:string){
+    this.operarItemEvent.emit( [ this.elemento, operacion ] );
   }
 }

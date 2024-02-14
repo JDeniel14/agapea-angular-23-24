@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Inject, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Inject, Input, OnChanges, OnDestroy, OnInit, Output, Renderer2, SimpleChanges, ViewChild } from '@angular/core';
 import { MI_TOKEN_SERVICIOSTORAGE } from '../../../servicios/injectiontokenstorageservices';
 import { IStorageService } from '../../../modelos/interfaceservicios';
 import { Observable, Subscription } from 'rxjs';
@@ -15,104 +15,96 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
   templateUrl: './datosenvio.component.html',
   styleUrl: './datosenvio.component.css',
 })
-export class DatosenvioComponent implements OnDestroy, OnChanges, OnInit {
-  @Input()listaProvincias$!:Observable<IProvincia[]>;
-  @Input() datosPagoPedido!:IDatosPago | null;
-  @Input() formDatosPedido!:FormGroup;
-  @Output() checkdatosFacturacionEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
+export class DatosenvioComponent implements OnDestroy, OnChanges {
+  @Input()listaProvincias!:IProvincia[];
+    @Input()datosPago!:IDatosPago;
+    @Output() checkdatosFacturacionEvent:EventEmitter<boolean>=new EventEmitter<boolean>();
 
-  public formDatosEnvio!: FormGroup;
-
-  public datosCliente!: ICliente | null;
-  public direccioprincipal: IDireccion | undefined;
-
-  public subCliente : Subscription ;
-  public listaMunicipios$!:Observable<IMunicipio[]>;
+    //----------referencias a variables template de la vista ---------------------
+    @ViewChild('selectmunis') selectmunis!:ElementRef;
 
 
+    //public datosCliente$!:Observable<ICliente>;
+    public datosCliente!:ICliente | null;
+    public direccionprincipal:IDireccion | undefined;
+    public listaMunicipios$!:Observable<IMunicipio[]>;
 
-  //--- variables de tipo switch para ocultar/mostrar partes de la vista datosenvio--
-  public checkdirppalenvio: boolean = false;
-  public checkclienteloggedenvio: boolean = true;
-  public disabledMuni : boolean = true;
-  constructor(
-    @Inject(MI_TOKEN_SERVICIOSTORAGE) private storageSvc: IStorageService,
-    private restSvc:RestnodeService
-  ) {
-    this.subCliente = this.storageSvc.RecuperarDatosCliente()
-                                      .subscribe(datos => {
-                                          this.datosCliente = datos
-                                          this.direccioprincipal = this.datosCliente?.direcciones?.filter((dir :IDireccion) => dir.esPrincipal == true)[0];
-                                        });
+    private datosClienteSubscriptor:Subscription;
+    private _dirEnvioIni:IDireccion={
+                                      calle:        '',
+                                      pais:         'España',
+                                      cp:           0,
+                                      provincia:    { CCOM:'', PRO:'', CPRO:''},
+                                      municipio:    { CUN:'', CPRO:'', CMUM:'', DMUN50:''},
+                                      esPrincipal:  true,
+                                      esFacturacion: false,
+                                };
+    //----variables de tipo switch para ocultar/mostrar partes de la vista datosenvio-----
+    public checkdirppalenvio:boolean=true;
+    public checkclienteloggedenvio:boolean=true;
 
 
-  }
-  ngOnInit(): void {
-    if(this.datosCliente != null){
-      this.formDatosEnvio.patchValue({
-        nombreDestinatario: this.datosCliente?.nombre,
-        apellidosDestinatario: this.datosCliente.apellidos,
-        telefonoDestinatario : this.datosCliente?.telefono,
-        emailDestinatario: this.datosCliente?.cuenta.email
-      })
+    constructor(@Inject(MI_TOKEN_SERVICIOSTORAGE) private storageSvc:IStorageService,
+                private restSvc: RestnodeService,
+                private render2: Renderer2){
+      //this.datosCliente$=this.storageSvc.RecuperarDatosCliente();
+      this.datosClienteSubscriptor=this.storageSvc
+                                      .RecuperarDatosCliente()
+                                      .subscribe( datos => {
+
+                                            this.datosCliente=datos;
+
+                                            if (this.datosCliente?.direcciones && this.datosCliente.direcciones.length > 0) {
+                                              this.direccionprincipal=this.datosCliente.direcciones.filter((d:IDireccion)=>d.esPrincipal==true)[0];
+                                            } else {
+                                                // lo mismo el cliente esta registrado y aun no tiene direcciones dadas de alta...entonces obligo a q genere una:
+                                                this.checkdirppalenvio=false;
+                                            }
+
+                                          });
     }
-  }
 
 
-  CargarMunicipios(provSelec:string){// <-- va codPro-nombreProv
-    this.listaMunicipios$ = this.restSvc.RecuperarMunicipios(provSelec.split('-')[0]);
-    this.disabledMuni = false;
-
-
-  }
-
-  CheckdirPpalEnvio(check: boolean) {
-    this.checkdirppalenvio = check;
-    if(check){
-      this.formDatosEnvio.patchValue({
-        calle: this.direccioprincipal?.calle,
-        cp: this.direccioprincipal?.cp,
-        pais: this.direccioprincipal?.pais,
-        provincia : this.direccioprincipal?.provincia,
-        municipio: this.direccioprincipal?.municipio
-
-      })
+    ngOnChanges(){
+      if(!this.checkdirppalenvio){
+          this.datosPago.direccionEnvio=this._dirEnvioIni;
+      }
     }
-  }
-  CheckClienteLoggedEnvio(check:boolean){
-    this.checkclienteloggedenvio = check;
-    if(check){
-      this.formDatosEnvio.patchValue({
-        nombreDestinatario: this.datosCliente?.nombre+" "+this.datosCliente?.apellidos,
-        telefonoDestinatario : this.datosCliente?.telefono,
-        emailDestinatario: this.datosCliente?.cuenta.email
-      })
+
+    CargarMunicipios( provSelec:string){ //<--- va: "cpro - nombre provincia"
+      //this.selectmunis.nativeElement.innerHTML='';
+      this.listaMunicipios$=this.restSvc.RecuperarMunicipios(provSelec.split('-')[0]);
+      this.render2.removeAttribute(this.selectmunis.nativeElement, 'disabled');
+
+
+      this.datosPago.direccionEnvio!.provincia={CCOM:'', CPRO: provSelec.split('-')[0], PRO: provSelec.split('-')[1] }
     }
-  }
 
-  ShowComponenteDatosFactura(ev:any){
-    this.checkdatosFacturacionEvent.emit(ev.target.checked);
-    this.formDatosPedido.addControl('datosFacturacion', new FormGroup({
-      tipoFactura: new FormControl('', [Validators.required]),
-      nombreFactura: new FormControl('', [Validators.required]),
-      docfiscalFactura: new FormControl('', [Validators.required]),
-      paisFactura: new FormControl('', [Validators.required]),
-      calleFactura: new FormControl('', [Validators.required]),
-      provinciaFactura: new FormControl('', [Validators.required]),
-      municipioFactura: new FormControl('', [Validators.required]),
-      cpFactura: new FormControl('', [Validators.required]),
-    }))
-
-    if(!ev.target.checked){
-      this.formDatosPedido.removeControl('datosFacturacion');
+    EstableceMunicipio( muniSelec: string){
+      this.datosPago.direccionEnvio!.municipio={CUN:'', CPRO: this.datosPago.direccionEnvio!.provincia.CPRO, CMUM:muniSelec.split('-')[0] , DMUN50: muniSelec.split('-')[1] }
     }
-  }
 
-  ngOnChanges(changes: SimpleChanges): void {
-   this.formDatosEnvio = this.formDatosPedido.get('datosEnvio') as FormGroup;
-  }
+    ShowComponenteDatosFactura(ev:any){
+      this.checkdatosFacturacionEvent.emit(ev.target.checked);
+    }
+    CheckdirPpalEnvio(check:boolean){
+      this.checkdirppalenvio=check;
+      if (check) {
+          this.datosPago.tipodireccionenvio='principal';
+          this.datosPago.direccionEnvio=this.direccionprincipal;
+      } else {
+          this.datosPago.tipodireccionenvio='otradireccion';
+          this.datosPago.direccionEnvio=this._dirEnvioIni;
 
-  ngOnDestroy(): void {
-   this.subCliente.unsubscribe();
-  }
+      }
+    }
+
+    CheckClienteLoggedEnvio(check:boolean){
+      this.checkclienteloggedenvio=check;
+    }
+
+    ngOnDestroy(): void {
+      this.datosClienteSubscriptor.unsubscribe();
+    }
+
 }
