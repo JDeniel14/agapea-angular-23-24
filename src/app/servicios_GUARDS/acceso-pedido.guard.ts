@@ -23,13 +23,19 @@ export class AccesoPedidoGuard implements CanActivate { //<--- debe ser canActiv
     childRoute: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
 
-      return this.storageSVC
-                .RecuperarDatosCliente()
+     return (this.storageSVC
+                .RecuperarDatosCliente() as Observable<ICliente|null>)
                 .pipe(
                    // last(), <--- no podemos usar last porque si no devuelve algo el servicio o lo que devuelve es vacio, no actua?
                    tap((datos:ICliente |null)=> console.log('datos del cliente pasados al GUARD...',datos)),
                     map(datos => {return datos != null ? true : this.router.parseUrl('/Cliente/Login')})
                   );
+
+                  if(this.storageSVC.RecuperarDatosCliente() != null){
+                    return true;
+                  }else{
+                    return this.router.parseUrl('/Cliente/Login');
+                  }
 
       /* .subscribe(
         datos => {

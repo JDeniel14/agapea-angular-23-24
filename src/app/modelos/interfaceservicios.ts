@@ -7,10 +7,10 @@ export interface IStorageService{
   //#region metodos sincronos
    AlmacenarDatosCliente(datoscliente:ICliente):void;
    AlmacenarJWT(jwt:string):void;
-   RecuperarDatosCliente():Observable<ICliente | null>;  //<--- lo podiamos hacer devolviendo valor de tipo icliente como en blazor, pero con el observable aprovechamos pipe async
-   RecuperarJWT():Observable<string>; //<--- lo podiamos hacer devolviendo valor de tipo string como en blazor, pero con el observable aprovechamos pipe async
+   RecuperarDatosCliente():Observable<ICliente | null> | ICliente | null;  //<--- lo podiamos hacer devolviendo valor de tipo icliente como en blazor, pero con el observable aprovechamos pipe async
+   RecuperarJWT(): Observable<string> |string; //<--- lo podiamos hacer devolviendo valor de tipo string como en blazor, pero con el observable aprovechamos pipe async
    OperarItemsPedido(libro:ILibro, cantidad:number, operacion : string):void
-   RecuperarItemsPedido():Observable<{libroElemento: ILibro, cantidadElemento:number}[]>;
+   RecuperarItemsPedido():Observable<{ libroElemento: ILibro; cantidadElemento: number; }[] > | Array<{ libroElemento: ILibro; cantidadElemento: number; }>;
   //#endregion
 
   //#region metodos asincronos para servicio indexedDB

@@ -22,13 +22,23 @@ export class AuthjwtInterceptor implements HttpInterceptor, OnDestroy {
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
 
+    /*let _jwt = this.storageSVC.RecuperarJWT();
+    if (_jwt != null || _jwt != '') {
+      const _reqclonada = request.clone({
+        setHeaders: { Authorization: `Bearer ${_jwt}` }
+      });
+      return next.handle(_reqclonada);
+    } else {
+      // Si el JWT está vacío, continuamos sin la cabecera
+      return next.handle(request);
+    }*/
 
-    return this.storageSVC
-    .RecuperarJWT()
+
+    return (this.storageSVC.RecuperarJWT() as Observable<string>)
     .pipe(
       tap((jwt: string) => console.log('estamos en INTERCEPTOR para intentar añadir JWT en cabecera...->', jwt)),
       first(),
-      concatMap(jwt => {
+      concatMap((jwt:string) => {
         // Si el JWT no está vacío, agregamos la cabecera de autorización
         if (jwt != null || jwt != '') {
           const _reqclonada = request.clone({
@@ -41,6 +51,8 @@ export class AuthjwtInterceptor implements HttpInterceptor, OnDestroy {
         }
       })
     );
+
+
 
 
 

@@ -36,8 +36,8 @@ export class AppComponent implements OnDestroy {
     private router: Router,
     @Inject(MI_TOKEN_SERVICIOSTORAGE) private storageSvc: IStorageService
   ) {
-    this.clienteLogged$ = this.storageSvc.RecuperarDatosCliente();
-    this.clienteLogged$.forEach((c) => console.log('cliente...', c));
+    this.clienteLogged$ = this.storageSvc.RecuperarDatosCliente() as Observable<ICliente|null>;
+    //this.clienteLogged$.forEach((c) => console.log('cliente...', c));
     this.routerEvent$ = this.router.events.pipe(
       tap(),
       map((ev) => ev as RouterEvent), //para transformar el observable en otro

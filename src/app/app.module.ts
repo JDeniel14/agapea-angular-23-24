@@ -12,37 +12,31 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms'
 
 //--------------- componentes del modulo principal de la aplicacion----------------------------
 import { AppComponent } from './app.component';
-import { RegistroComponent } from './componentes/zonaCliente/registroComponent/registro.component';
-import { LoginComponent } from './componentes/zonaCliente/loginComponent/login.component';
-
+import { PanelclienteComponent } from './componentes/zonaCliente/panelClienteComponent/panelcliente.component';
+import { PanelTiendaComponent } from './componentes/zonaTienda/panelTiendaComponent/panel-tienda.component';
 
 
 
 //----------------- directivas del modulo principal de la aplicacion--------------------------
-import { EmailfilterdomainDirective } from './directivas/emailfilterdomain.directive';
 
-import { ComprobacionexisteemailDirective } from './directivas/comprobacionexisteemail.directive';
 
 //----------------- pipes del modulo principal de la aplicacion-------------------------------
 
 //----------------- servicios del modulo principal de la aplicacion---------------------------
 import { RestnodeService } from './servicios/restnode.service';
-import { RegistrookComponent } from './componentes/zonaCliente/registroOkComponent/registrook.component';
-import { PanelclienteComponent } from './componentes/zonaCliente/panelClienteComponent/panelcliente.component';
 
-import { RedondeocantidadPipe } from './pipes/redondeocantidad.pipe';
-import { LibrosComponent } from './componentes/zonaTienda/librosComponent/libros.component';
-import { DetalleslibroComponent } from './componentes/zonaTienda/mostrarDetallesLibroComponent/detalleslibro.component';
-import { MinilibroComponent } from './componentes/zonaTienda/minilibroComponent/minilibro.component';
-import { PanelTiendaComponent } from './componentes/zonaTienda/panelTiendaComponent/panel-tienda.component';
+
+
 import { SubjectStorageService } from './servicios/subject-storage.service';
 import { MI_TOKEN_SERVICIOSTORAGE } from './servicios/injectiontokenstorageservices';
-import { MostrarpedidoComponent } from './componentes/zonaTienda/mostrarPedidoComponent/mostrarpedido.component';
-import { ElementopedidoComponent } from './componentes/zonaTienda/miniElementoPedidoComponent/elementopedido.component';
-import { DatosenvioComponent } from './componentes/zonaTienda/datoEnvioComponent/datosenvio.component';
-import { DatosfacturacionComponent } from './componentes/zonaTienda/datosFacturacionComponent/datosfacturacion.component';
-import { DatospagoComponent } from './componentes/zonaTienda/datosPagoComponent/datospago.component';
+
+
 import { AuthjwtInterceptor } from './servicios_INTERCEPTORS/authjwt.interceptor';
+
+import { ZonaTiendaRoutingModule } from './modulos_zonas/zona-tienda-routing.module';
+import { ZonaclienteRoutingModule } from './modulos_zonas/zonacliente-routing.module';
+
+
 
 
 
@@ -54,26 +48,9 @@ import { AuthjwtInterceptor } from './servicios_INTERCEPTORS/authjwt.interceptor
 @NgModule({
   declarations: [ //<---- array con defs. de componentes, directivas y pipes disponibles para toda la aplicacion
     AppComponent,
-    RegistroComponent,
-    LoginComponent,
-    EmailfilterdomainDirective,
-    ComprobacionexisteemailDirective,
-    RegistrookComponent,
     PanelclienteComponent,
-    RedondeocantidadPipe,
-    LibrosComponent,
-    DetalleslibroComponent,
-    MinilibroComponent,
     PanelTiendaComponent,
-    MostrarpedidoComponent,
-    ElementopedidoComponent,
-    DatosenvioComponent,
-    DatosfacturacionComponent,
-    DatospagoComponent,
-
-
-
-
+    
 
 
   ],
@@ -86,6 +63,8 @@ import { AuthjwtInterceptor } from './servicios_INTERCEPTORS/authjwt.interceptor
 // carga un componente u otro
     AppRoutingModule,
     FormsModule,
+    ZonaTiendaRoutingModule, // <---- SI HACES LAZY LOADING, LOS MODULOS DE ENRUTAMIENTO DE LOS HIJOS HAY QUE METERLOS, SINO CASCA TODO
+    ZonaclienteRoutingModule
   ],
   /**
    * Los servicios son importantes. En angular no hay contexto global, se hace mediante servicios. Si algun componente necesita

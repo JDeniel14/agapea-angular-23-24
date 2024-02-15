@@ -28,7 +28,7 @@ export class MostrarpedidoComponent  {
 
    constructor( @Inject(MI_TOKEN_SERVICIOSTORAGE) private storageSvc:IStorageService,
                 private restSvc:RestnodeService ){
-      this.listaItems$=storageSvc.RecuperarItemsPedido();
+      this.listaItems$=storageSvc.RecuperarItemsPedido()as Observable<Array<{libroElemento:ILibro, cantidadElemento:number}>>;
       this.subTotal$=this.listaItems$.pipe(
                                           map(
                                             (items:{ libroElemento:ILibro, cantidadElemento:number}[])=> items.reduce( (suma,item)=> suma + (item.libroElemento.Precio * item.cantidadElemento) ,0)
@@ -36,7 +36,7 @@ export class MostrarpedidoComponent  {
                                           );
       this.listaProvincias$=restSvc.RecuperarProvincias();
    }
- 
+
 
    ShowCompDatosFacturacion(valor:boolean){
     this.showcompdatosfacturacion=valor;
@@ -70,23 +70,23 @@ export class MostrarpedidoComponent  {
         };
 
         this.listaItems$.pipe(
-                                mergeMap(
-                                  items => {
-                                            _pedidoActual.elementosPedido=items;
+          mergeMap(
+            (items:Array<{libroElemento:ILibro, cantidadElemento:number}>) => {
+                      _pedidoActual.elementosPedido=items;
 
-                                            let _subtotal=items.reduce( (s,i)=>s + (i.libroElemento.Precio * i.cantidadElemento), 0);
-                                            _pedidoActual.subtotal=_subtotal;
-                                            _pedidoActual.totalPedido=_subtotal + _pedidoActual.gastosEnvio;
+                      let _subtotal=items.reduce( (s,i)=>s + (i.libroElemento.Precio * i.cantidadElemento), 0);
+                      _pedidoActual.subtotal=_subtotal;
+                      _pedidoActual.totalPedido=_subtotal + _pedidoActual.gastosEnvio;
 
-                                            return this.storageSvc.RecuperarDatosCliente();
-                                          }
-                                )
-                          ).subscribe(
-                            async clientelog => {
-                                        console.log('datos a mandar a server...',{ pedido: _pedidoActual, email: clientelog!.cuenta.email});
-                                        let _urlObject=await this.restSvc.FinalizarPedido( _pedidoActual, clientelog!.cuenta.email);
-                            }
-                          )
+                      return this.storageSvc.RecuperarDatosCliente() as Observable<ICliente>;
+                    }
+          )
+    ).subscribe(
+      async clientelog => {
+                  console.log('datos a mandar a server...',{ pedido: _pedidoActual, email: clientelog!.cuenta.email});
+                  let _urlObject=await this.restSvc.FinalizarPedido( _pedidoActual, clientelog!.cuenta.email);
+      }
+    )
         }
 
 }

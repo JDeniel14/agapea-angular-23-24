@@ -17,20 +17,10 @@ import { AccesoPedidoGuard } from './servicios_GUARDS/acceso-pedido.guard';
  */
 const routes: Routes = [
   {
-    path: 'Cliente',
-    children: [
-      { path: 'Registro', component: RegistroComponent },
-      { path: 'Login', component: LoginComponent },
-      {path:'RegistroOk', component: RegistrookComponent }
-    ],
+    path: 'Cliente',loadChildren: ()=> import('./modulos_zonas/zonacliente.module').then(m => m.ZonaclienteModule )
   },
   {
-    path: 'Tienda',
-    children: [
-      {path: 'Libros/:idcat?', component: LibrosComponent},
-      {path : 'MostrarLibro/:isbn', component:DetalleslibroComponent },
-      {path: 'MostrarPedido', component:MostrarpedidoComponent, canActivate:[AccesoPedidoGuard]}
-    ]
+    path: 'Tienda', loadChildren: ()=> import('./modulos_zonas/zona-tienda.module').then(m => m.ZonaTiendaModule)
   },
   { path: '', redirectTo: '/Tienda/Libros/2-10', pathMatch: 'full' },
 

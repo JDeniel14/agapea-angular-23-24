@@ -48,8 +48,8 @@ export class DatosenvioComponent implements OnDestroy, OnChanges {
                 private restSvc: RestnodeService,
                 private render2: Renderer2){
       //this.datosCliente$=this.storageSvc.RecuperarDatosCliente();
-      this.datosClienteSubscriptor=this.storageSvc
-                                      .RecuperarDatosCliente()
+      this.datosClienteSubscriptor=(this.storageSvc
+                                      .RecuperarDatosCliente() as Observable<ICliente|null>)
                                       .subscribe( datos => {
 
                                             this.datosCliente=datos;

@@ -15,7 +15,7 @@
                   <img src="../assets/images/botonMINIcontacto.png">
                 </a>
                 <!-- si hay un objeto sesion CLIENTE muestro el boton con su email y nombre y apellidos para q acceda a su PANEL, sino al LOGIN-->
-                @if ((this.clienteLogged$ |async)) {
+                @if (this.clienteLogged$ |async; as datoscliente) {
                 <a [routerLink]="['/Cliente/Panel/InicioPanel']" routerLinkActive="router-link-active"
                   class="btn br-negro btn-sm">
                   <span style="color:white">{{(this.clienteLogged$ | async)?.cuenta?.email}}</span>
