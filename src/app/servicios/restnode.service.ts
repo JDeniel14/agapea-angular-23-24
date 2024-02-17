@@ -43,6 +43,18 @@ export class RestnodeService {
 
   }
 
+  public ReLoginCliente(datos:{idpedido:string,idcliente:string}):Promise<IRestMessage>{
+
+    return lastValueFrom(
+      this._httpClient.post<IRestMessage>('http://localhost:3000/api/Cliente/ReLogin',
+        datos,
+        {
+          headers: new HttpHeaders({'Content-Type':'application/json'})
+        }
+      )
+    );
+  }
+
   public Registro(cliente:ICliente):Observable<IRestMessage>{
     //buscar como se hace para mandar objeto "cliente" que pasa el componente registro.component.ts
     //a nodejs usando el servicio HTTPCLIENT en angular
@@ -117,11 +129,11 @@ export class RestnodeService {
     return this._httpClient.get<IMunicipio[]>(`http://localhost:3000/api/Tienda/RecuperarMunicipios?codpro=${codpro}`);
   }
 
-  public FinalizarPedido(pedido : IPedido, email: string):Promise<{url:string}>{
+  public FinalizarPedido(pedido : IPedido, email: string):Promise<IRestMessage>{
     return lastValueFrom(
       this._httpClient
-          .post<{url:string}>(
-            "http://localhost:3000/api/Tienda/FinalizarPedido",
+          .post<IRestMessage>(
+            "http://localhost:3000/api/Pedido/FinalizarPedido",
             { pedido, email},
             { headers: new HttpHeaders({'Content-Type':'application/json'}) }
           )

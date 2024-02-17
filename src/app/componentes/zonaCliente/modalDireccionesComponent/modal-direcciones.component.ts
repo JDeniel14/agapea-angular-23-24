@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, Renderer2, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, InputSignal, Renderer2, ViewChild, effect, input } from '@angular/core';
 import { IDireccion } from '../../../modelos/direccion';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
@@ -12,7 +12,28 @@ import { RestnodeService } from '../../../servicios/restnode.service';
   styleUrl: './modal-direcciones.component.css'
 })
 export class ModalDireccionesComponent {
-  @Input()direccionEd:IDireccion| undefined;
+  //#region --------- parametro @Input de toda la vida,con setter para interceptar cambios en vez de metodo onchanges----
+ /* @Input() set direccionEd(value: IDireccion| undefined){
+      console.log('....estamos en el set del param. input...cambiando su valor....')
+      if(value!.calle == '' && value!.cp ==''){
+        this.operacion='crear'
+        //reseteo formulario
+        this.formdirecciones.reset()
+      }else{
+        this.operacion='modificar';
+        //precargamos las cajas del form con valores de la direccion pasada como param.
+        this.PrecargaDatosFormConDireccionModif()
+      }
+  };
+      get direccionEd():IDireccion|undefined{
+        return this.direccionEd;
+      }*/
+//#endregion
+
+  //#region ------ con SIGNAL-INPUT: input() y effect() ----
+    public direccionEd = input.required<IDireccion>();
+  //#endregion
+
 
   public formdirecciones: FormGroup;
   public operacion:string='crear';
@@ -37,7 +58,25 @@ export class ModalDireccionesComponent {
       municipio: new FormControl()
       }
     );
+
+    effect(
+      ()=>{
+        if(this.direccionEd()!.calle == '' && this.direccionEd()!.cp ==''){
+          this.operacion='crear'
+          //reseteo formulario
+          this.formdirecciones.reset()
+        }else{
+          this.operacion='modificar';
+          //precargamos las cajas del form con valores de la direccion pasada como param.
+          this.PrecargaDatosFormConDireccionModif()
+        }
+      }
+    )
   }
+
+  /*OnChanges(){
+    //cada vez que cambia el valor de param. Input, se ejecuta este metodo...
+  }*/
 
   public CargarMunicipios(provSelec: string){
     this.listamunicipios$ = this.restSvc.RecuperarMunicipios(provSelec.split('-')[0]);
@@ -47,21 +86,21 @@ export class ModalDireccionesComponent {
   }
 
   public ResetValoresModal(){
-    this.direccionEd=undefined;
+    this.direccionEd= {} as InputSignal<IDireccion>;
     this.operacion='crear';
 
   }
   public  PrecargaDatosFormConDireccionModif(){
 
-    this.formdirecciones.controls['calle'].setValue(this.direccionEd!.calle)
-    this.formdirecciones.controls['cp'].setValue(this.direccionEd!.cp)
-    this.formdirecciones.controls['pais'].setValue(this.direccionEd!.pais)
-    this.formdirecciones.controls['provincia'].setValue(this.direccionEd!.provincia.CPRO+'-'+this.direccionEd?.provincia.PRO)
+    this.formdirecciones.controls['calle'].setValue(this.direccionEd()!.calle)//setValue(this.direccionEd()!.calle) <-- con signal
+    this.formdirecciones.controls['cp'].setValue(this.direccionEd!().cp)
+    this.formdirecciones.controls['pais'].setValue(this.direccionEd!().pais)
+    this.formdirecciones.controls['provincia'].setValue(this.direccionEd!().provincia.CPRO+'-'+this.direccionEd()?.provincia.PRO)
 
-    this.CargarMunicipios(this.direccionEd!.provincia.CPRO);
+    this.CargarMunicipios(this.direccionEd()!.provincia.CPRO);
     //dejo un poco de tiempo para q se carguen los municipios...
     setTimeout(
-      () => this.formdirecciones.controls['municipio'].setValue(this.direccionEd!.municipio.CMUM+'-'+this.direccionEd?.municipio.DMUN50),
+      () => this.formdirecciones.controls['municipio'].setValue(this.direccionEd()!.municipio.CMUM+'-'+this.direccionEd()?.municipio.DMUN50),
       1000);
 
   }

@@ -2,14 +2,15 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { ICliente } from '../../../modelos/cliente';
 import { MI_TOKEN_SERVICIOSTORAGE } from '../../../servicios/injectiontokenstorageservices';
 import { IStorageService } from '../../../modelos/interfaceservicios';
-import { Observable, map, mergeMap } from 'rxjs';
+import { Observable, Subscription, map, mergeMap } from 'rxjs';
 import { ILibro } from '../../../modelos/libro';
-import { KeyValue } from '@angular/common';
+import { KeyValue, Location } from '@angular/common';
 import { IProvincia } from '../../../modelos/provincia';
 import { RestnodeService } from '../../../servicios/restnode.service';
 import { IDatosPago } from '../../../modelos/datospago';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { IPedido } from '../../../modelos/pedido';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-mostrarpedido',
@@ -22,12 +23,20 @@ export class MostrarpedidoComponent  {
   public subTotal$!:Observable<number>;
   public gastosEnvio:number=2; //dependera de provincia de direccion envio q esta en objeto datosPago y bla bla bla...
 
+  public mensajeServer:string="";
+  private subParams!: Subscription;
+  private errorPedido:boolean = false;
+  private datos : any;
+  public clientelogged$?:Observable<ICliente|null>;
+
   public listaProvincias$!:Observable<IProvincia[]>;
   public showcompdatosfacturacion:boolean=false;
   public datosPago:IDatosPago={  tipodireccionenvio:'principal', tipoDireccionFactura: 'igualenvio', metodoPago:'tarjeta' };
 
    constructor( @Inject(MI_TOKEN_SERVICIOSTORAGE) private storageSvc:IStorageService,
-                private restSvc:RestnodeService ){
+                private restSvc:RestnodeService,
+                private router: Router,
+                private activatedRoute: ActivatedRoute){
       this.listaItems$=storageSvc.RecuperarItemsPedido()as Observable<Array<{libroElemento:ILibro, cantidadElemento:number}>>;
       this.subTotal$=this.listaItems$.pipe(
                                           map(
@@ -35,9 +44,35 @@ export class MostrarpedidoComponent  {
                                           )
                                           );
       this.listaProvincias$=restSvc.RecuperarProvincias();
+
+      this.subParams= this.activatedRoute.queryParamMap.pipe(
+        map((param)=> {
+          let idcliente = param.get('idcliente')
+          let idpedido = param.get('idpedido')
+          if(idcliente !== ''){
+            this.errorPedido = true;
+
+            this.mensajeServer = `Error al realizar el pago del pedido...`
+
+           this.datos = {idpedido:idpedido,
+              idcliente:idcliente};
+
+          }
+
+        })
+      ).subscribe();
    }
 
+  public async Relog(){
+    let _resp = await this.restSvc.ReLoginCliente(this.datos);
+    if(_resp.codigo === 0){
+      this.storageSvc.AlmacenarDatosCliente(_resp.datoscliente!);
+      this.storageSvc.AlmacenarJWT(_resp.token!);
 
+      this.clientelogged$=this.storageSvc.RecuperarDatosCliente() as Observable<ICliente|null>;
+    }
+
+  }
    ShowCompDatosFacturacion(valor:boolean){
     this.showcompdatosfacturacion=valor;
    }
@@ -84,9 +119,27 @@ export class MostrarpedidoComponent  {
     ).subscribe(
       async clientelog => {
                   console.log('datos a mandar a server...',{ pedido: _pedidoActual, email: clientelog!.cuenta.email});
-                  let _urlObject=await this.restSvc.FinalizarPedido( _pedidoActual, clientelog!.cuenta.email);
+                  let _resp=await this.restSvc.FinalizarPedido( _pedidoActual, clientelog!.cuenta.email);
+
+                  if(_resp.codigo == 0){
+                      let url= _resp.otrosdatos
+                      console.log(url)
+
+                    //this.location.go(url)
+                    window.location.href = url;
+                  }else{
+                    this.mensajeServer = _resp.mensaje;
+                  }
       }
-    )
+    );
+
+
+        }
+
+
+        ngOnDestroy(): void {
+          this.subParams?.unsubscribe();
+          
         }
 
 }

@@ -45,12 +45,14 @@ import { ZonaclienteRoutingModule } from './modulos_zonas/zonacliente-routing.mo
 
 
 
+
 @NgModule({
   declarations: [ //<---- array con defs. de componentes, directivas y pipes disponibles para toda la aplicacion
     AppComponent,
     PanelclienteComponent,
     PanelTiendaComponent,
-    
+
+
 
 
   ],

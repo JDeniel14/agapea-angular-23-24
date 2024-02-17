@@ -13,7 +13,7 @@ import { DatosfacturacionComponent } from '../componentes/zonaTienda/datosFactur
 import { DatospagoComponent } from '../componentes/zonaTienda/datosPagoComponent/datospago.component';
 import { MostrarpedidoComponent } from '../componentes/zonaTienda/mostrarPedidoComponent/mostrarpedido.component';
 import { RedondeocantidadPipe } from '../pipes/redondeocantidad.pipe';
-
+import { FinalizarPedidoOKComponent } from '../componentes/zonaTienda/FinalizarPedidoOKComponent/finalizar-pedido-ok.component';
 @NgModule({
   declarations: [
     LibrosComponent,
@@ -25,6 +25,7 @@ import { RedondeocantidadPipe } from '../pipes/redondeocantidad.pipe';
     DatospagoComponent,
     MostrarpedidoComponent,
     RedondeocantidadPipe,
+    FinalizarPedidoOKComponent,
   ],
   imports: [
     CommonModule,

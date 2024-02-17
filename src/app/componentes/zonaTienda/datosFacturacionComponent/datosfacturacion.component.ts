@@ -38,9 +38,10 @@ export class DatosfacturacionComponent {
       this.datosPago.direccionFacturacion=this.datosPago.direccionEnvio;
     } else {
       this.datosPago.direccionFacturacion={
+                                            idDireccion: window.crypto.randomUUID().toString(),
                                             calle:        '',
                                             pais:         'España',
-                                            cp:           0,
+                                            cp:           "",
                                             provincia:    { CCOM:'', PRO:'', CPRO:''},
                                             municipio:    { CUN:'', CPRO:'', CMUM:'', DMUN50:''},
                                             esPrincipal:  true,

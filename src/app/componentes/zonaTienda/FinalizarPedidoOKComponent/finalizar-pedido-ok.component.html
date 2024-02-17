@@ -1,0 +1,25 @@
+<div class="container">
+  <div class="row">
+      <img src="../../../../assets/images/pedidoOK.jpg" style="width: 200px; height: 200px;" alt="..." />
+  </div>
+
+  <div class="row">
+      <div class="col">
+          <h5>Pago del pedido con id: {{this.pedido?.idPedido}} realizado correctamente</h5>
+      </div>
+  </div>
+
+  <div class="row">
+      <div class="col">
+          <p>Has pagado {{this.pedido?.totalPedido}}  € en fecha: {{this.pedido?.fechaPedido}}  en Agapea.com</p>
+          <p>Se te ha mandado un email a: <span style="color:darksalmon">{{(this.clientelogged$ | async)?.cuenta?.email}}</span> con la factura del mismo (consulta la bandeja de entrada de tu correo o el spam por si acaso.</p>
+          <br />
+          <p> Accede al panel de tu USUARIO para ver la lista de pedidos que has hecho en la tienda.</p>
+      </div>
+  </div>
+
+  <div class="row d-flex justify-content-center">
+      <a class="btn btn-success btn-lg" [routerLink]="['/Cliente/Panel/InicioPanel']">IR A MI PANEL</a>
+  </div>
+
+</div>

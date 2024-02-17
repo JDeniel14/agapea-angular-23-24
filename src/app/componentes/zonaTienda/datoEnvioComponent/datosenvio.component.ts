@@ -31,9 +31,10 @@ export class DatosenvioComponent implements OnDestroy, OnChanges {
 
     private datosClienteSubscriptor:Subscription;
     private _dirEnvioIni:IDireccion={
+                                        idDireccion: window.crypto.randomUUID().toString(),
                                       calle:        '',
                                       pais:         'España',
-                                      cp:           0,
+                                      cp:           "",
                                       provincia:    { CCOM:'', PRO:'', CPRO:''},
                                       municipio:    { CUN:'', CPRO:'', CMUM:'', DMUN50:''},
                                       esPrincipal:  true,
@@ -56,6 +57,9 @@ export class DatosenvioComponent implements OnDestroy, OnChanges {
 
                                             if (this.datosCliente?.direcciones && this.datosCliente.direcciones.length > 0) {
                                               this.direccionprincipal=this.datosCliente.direcciones.filter((d:IDireccion)=>d.esPrincipal==true)[0];
+
+                                              this.CheckdirPpalEnvio(true)
+                                              console.log('dirppal..', this.direccionprincipal)
                                             } else {
                                                 // lo mismo el cliente esta registrado y aun no tiene direcciones dadas de alta...entonces obligo a q genere una:
                                                 this.checkdirppalenvio=false;
@@ -92,6 +96,7 @@ export class DatosenvioComponent implements OnDestroy, OnChanges {
       if (check) {
           this.datosPago.tipodireccionenvio='principal';
           this.datosPago.direccionEnvio=this.direccionprincipal;
+          console.log(this.datosPago.direccionEnvio)
       } else {
           this.datosPago.tipodireccionenvio='otradireccion';
           this.datosPago.direccionEnvio=this._dirEnvioIni;

@@ -26,6 +26,17 @@ export class InicioPanelComponent {
   public datosClienteStorage$:Observable<ICliente|null>;
   public direcciones$:Observable<IDireccion[]>;
 
+  public direcEditar: IDireccion= {
+    idDireccion:window.crypto.randomUUID(),
+    calle:'',
+    cp:'',
+    pais:'',
+    provincia:{CCOM:'',CPRO:'',PRO:''},
+    municipio:{CMUM:'',CPRO:'',CUN:'',DMUN50:''},
+    esPrincipal:false,
+    esFacturacion:false,
+  }
+
   @ViewChild('btnUploadImagen') btnUploadImagen!: ElementRef;
   @ViewChild('modaldirec') modaldirec!: ModalDireccionesComponent;
   @ViewChild('btonNewDireccion') btonNewDireccion!:ElementRef;
@@ -118,7 +129,7 @@ export class InicioPanelComponent {
         //muestro modal con direccion a modificar...
       console.log('vamos a modificar direccion...', datos[0])
       this.modaldirec.operacion='modificar';
-      this.modaldirec.direccionEd=datos[0];
+      //this.modaldirec.direccionEd=datos[0];
       this.modaldirec.PrecargaDatosFormConDireccionModif();
 
       //this.modaldirec.ShowModal();
