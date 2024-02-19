@@ -115,7 +115,7 @@
                   </button>
 
                   <!-- Modal -->
-                  <app-modal-direcciones #modaldirec [direccionEd]="this.direcEditar"></app-modal-direcciones>
+                  <app-modal-direcciones #modaldirec [direccionEd]="this.direcEditar" (operarDireccionModalEvent)="this.RecuperarDireccionesModal($event)"></app-modal-direcciones>
 
               </div>
           </div>

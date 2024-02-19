@@ -4,7 +4,6 @@ import { MI_TOKEN_SERVICIOSTORAGE } from '../../../servicios/injectiontokenstora
 import { IStorageService } from '../../../modelos/interfaceservicios';
 import { Observable, Subscription, map, mergeMap } from 'rxjs';
 import { ILibro } from '../../../modelos/libro';
-import { KeyValue, Location } from '@angular/common';
 import { IProvincia } from '../../../modelos/provincia';
 import { RestnodeService } from '../../../servicios/restnode.service';
 import { IDatosPago } from '../../../modelos/datospago';
@@ -35,7 +34,6 @@ export class MostrarpedidoComponent  {
 
    constructor( @Inject(MI_TOKEN_SERVICIOSTORAGE) private storageSvc:IStorageService,
                 private restSvc:RestnodeService,
-                private router: Router,
                 private activatedRoute: ActivatedRoute){
       this.listaItems$=storageSvc.RecuperarItemsPedido()as Observable<Array<{libroElemento:ILibro, cantidadElemento:number}>>;
       this.subTotal$=this.listaItems$.pipe(
@@ -139,7 +137,7 @@ export class MostrarpedidoComponent  {
 
         ngOnDestroy(): void {
           this.subParams?.unsubscribe();
-          
+
         }
 
 }

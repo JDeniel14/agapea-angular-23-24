@@ -9,6 +9,8 @@ import { ICategoria } from '../modelos/categoria';
 import { IProvincia } from '../modelos/provincia';
 import { IMunicipio } from '../modelos/municipio';
 import { IPedido } from '../modelos/pedido';
+import { KeyValue } from '@angular/common';
+import { IDireccion } from '../modelos/direccion';
 
 
 /**
@@ -94,6 +96,18 @@ export class RestnodeService {
       `http://localhost:3000/api/Cliente/ActivarCuenta?mod${mode}&cod=${oobCode}&key=${apiKey}`,
 
     ) as Observable<IRestMessage>;
+  }
+
+  public UpdateDatosCliente(datosCliente: ICliente,passCambiar:string, emailCliente:string):Promise<IRestMessage>{
+
+    return lastValueFrom(
+      this._httpClient.post<IRestMessage>(
+        'http://localhost:3000/api/Cliente/UpdateDatosCliente',
+        {datosCliente,passCambiar,emailCliente},
+        {headers: new HttpHeaders({'Content-Type':'application/json'})}
+      )
+
+    )
   }
 //#endregion
 

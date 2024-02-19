@@ -1,4 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
+import { ICliente } from '../../../modelos/cliente';
+import { MI_TOKEN_SERVICIOSTORAGE } from '../../../servicios/injectiontokenstorageservices';
+import { IStorageService } from '../../../modelos/interfaceservicios';
 
 @Component({
   selector: 'app-panelcliente',
@@ -13,9 +16,18 @@ export class PanelclienteComponent implements OnInit {
     'Mis Listas',
   ];
 
+  public clienteLog :ICliente = {} as ICliente;
+
   /**
    *
    */
-  constructor() {}
-  ngOnInit(): void {}
+  constructor(@Inject(MI_TOKEN_SERVICIOSTORAGE)private storageSvc:IStorageService) {
+
+
+  }
+  ngOnInit(): void {
+    console.log(this.clienteLog)
+    this.clienteLog = this.storageSvc.RecuperarDatosCliente() as ICliente;
+
+  }
 }
